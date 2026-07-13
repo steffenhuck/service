@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SERVICE! — from the plonge to the world</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script data-goatcounter="https://steffenhuck.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<style>
+:root{
+  --tile:#f4f1e8; --grout:#ded7c6; --ink:#28313c; --ink2:#5b6672;
+  --gas:#3a7bd5; --gasdeep:#2b5fa8; --copper:#c2691e; --tomato:#d94f3d;
+  --butter:#f2c14e; --parsley:#4a8c5c; --paper:#fdfaf2; --paperedge:#e9dfc8;
+  --shadow:0 3px 0 rgba(40,49,60,.14);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+  color:var(--ink); background:var(--tile);
+  /* subway tile */
+  background-image:
+    linear-gradient(var(--grout) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, var(--grout) 1.5px, transparent 1.5px);
+  background-size:100% 56px, 112px 56px;
+  min-height:100vh;
+}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 90px}
+h1,h2,h3,.disp{font-family:"Bricolage Grotesque",system-ui,sans-serif}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+
+/* ---------- header ---------- */
+header{display:flex;align-items:center;gap:10px;padding:8px 2px 4px}
+.burner{width:54px;height:54px;flex:0 0 54px}
+h1{font-size:30px;line-height:1;margin:0;font-weight:800;letter-spacing:-.5px}
+h1 small{display:block;font-size:11px;font-weight:600;color:var(--ink2);letter-spacing:.4px;margin-top:3px}
+.whenwhere{margin-left:auto;text-align:right}
+.season{font-weight:700;font-size:14px}
+.rungname{font-size:11px;color:var(--gasdeep);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+
+/* ---------- ladder ---------- */
+.ladder{display:flex;gap:3px;margin:6px 0 10px;align-items:flex-end}
+.ladder i{flex:1;height:7px;border-radius:3px;background:#e4ddcd;border:1px solid #d7cfba;transition:background .4s}
+.ladder i.done{background:var(--copper);border-color:var(--copper)}
+.ladder i.now{background:var(--gas);border-color:var(--gasdeep);height:12px;animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.55}}
+
+/* ---------- stats ---------- */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:8px}
+.stat{background:var(--paper);border:1.5px solid var(--paperedge);border-radius:12px;padding:6px 4px 5px;text-align:center;box-shadow:var(--shadow)}
+.stat svg{width:22px;height:22px;display:block;margin:0 auto 2px}
+.stat .val{font-weight:600;font-size:13px}
+.stat .lbl{font-size:9px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink2)}
+.bar{height:5px;border-radius:3px;background:#eee6d4;margin-top:4px;overflow:hidden}
+.bar b{display:block;height:100%;border-radius:3px;transition:width .5s}
+.stat.warn{border-color:var(--tomato);animation:pulse 1.2s infinite}
+.money .val{color:var(--copper)} .money .val.debt{color:var(--tomato)}
+
+/* ---------- ventures ---------- */
+#ventures{display:flex;gap:8px;overflow-x:auto;padding:2px 0 8px;-webkit-overflow-scrolling:touch}
+#ventures:empty{display:none}
+.vcard{flex:0 0 138px;background:var(--paper);border:1.5px solid var(--paperedge);border-radius:12px;padding:0 0 7px;box-shadow:var(--shadow);position:relative}
+.vcard .awning{height:16px;border-radius:10px 10px 0 0;background:repeating-linear-gradient(90deg,var(--tomato) 0 12px,#fff 12px 24px)}
+.vcard.far .awning{background:repeating-linear-gradient(90deg,var(--gas) 0 12px,#fff 12px 24px)}
+.vcard .vname{font-weight:700;font-size:12px;padding:5px 8px 1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vcard .vmeta{font-size:10px;color:var(--ink2);padding:0 8px}
+.vcard .vstars{position:absolute;top:20px;right:6px;font-size:11px;letter-spacing:1px;color:var(--butter);text-shadow:0 1px 0 rgba(0,0,0,.25)}
+.mq{margin:5px 8px 0}
+.mq .bar b{background:var(--parsley)}
+.vcard.rot .mq .bar b{background:var(--tomato)}
+.vcard .staffed{position:absolute;top:-7px;left:8px;background:var(--parsley);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;display:none}
+.vcard.staffed .staffed{display:block}
+
+/* ---------- ticket rail ---------- */
+#rail{position:relative;margin:4px 0 10px;min-height:8px}
+.railbar{height:10px;background:linear-gradient(#39424e,#28313c);border-radius:5px;box-shadow:inset 0 -2px 0 rgba(0,0,0,.3)}
+.ticket{
+  background:var(--paper);border:1.5px solid var(--paperedge);border-top:none;
+  border-radius:0 0 12px 12px;margin:0 10px;padding:12px 14px 13px;
+  box-shadow:0 6px 14px rgba(40,49,60,.15);
+  font-family:"IBM Plex Mono",monospace;position:relative;
+  transform-origin:top center;
+}
+.ticket::before{ /* perforation */
+  content:"";position:absolute;top:0;left:0;right:0;height:0;
+  border-top:2px dashed #cfc6ae;
+}
+.ticket.printing{animation:printout .55s steps(6) both}
+@keyframes printout{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0% 0)}}
+.tkind{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ink2);display:flex;justify-content:space-between}
+.ttitle{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:19px;margin:4px 0 6px;letter-spacing:-.3px}
+.tscene{font-family:system-ui,sans-serif;font-size:14px;line-height:1.45;color:#37404b}
+.tchoices{margin-top:10px;display:flex;flex-direction:column;gap:7px}
+.tchoices button{
+  font-family:system-ui,sans-serif;text-align:left;font-size:14px;font-weight:600;
+  background:#fff;border:2px solid var(--gas);color:var(--gasdeep);
+  border-radius:11px;padding:10px 12px;cursor:pointer;transition:transform .06s;
+}
+.tchoices button:active{transform:scale(.98)}
+.tchoices button:disabled{border-color:#d8d2c2;color:#a9a394;background:#faf7ef}
+.tchoices button .why{display:block;font-size:11px;font-weight:500;color:var(--ink2)}
+.tchoices button.hot{border-color:var(--tomato);color:var(--tomato)}
+.tresult{margin-top:9px;font-size:13px;font-weight:600;color:var(--parsley)}
+.tresult.bad{color:var(--tomato)}
+.ticket.special{background:#fff8e6;border-color:#ecd9a0}
+.ticket.star{background:#fffdf4;border-color:var(--butter)}
+
+/* ---------- the pass (allocation) ---------- */
+#pass{background:var(--paper);border:1.5px solid var(--paperedge);border-radius:14px;padding:11px 12px;box-shadow:var(--shadow)}
+#pass h2{margin:0 0 2px;font-size:15px;display:flex;justify-content:space-between;align-items:center}
+.budget{font-size:12px;color:var(--ink2);font-weight:600}
+.flames{letter-spacing:2px}
+.levers{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}
+.lever{background:#fff;border:1.5px solid var(--paperedge);border-radius:12px;padding:6px 2px 6px;text-align:center;user-select:none}
+.lever svg{width:24px;height:24px;display:block;margin:0 auto}
+.lever .lname{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;margin:2px 0 4px}
+.lever .pts{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:15px;min-height:20px}
+.lever .pm{display:flex;gap:4px;justify-content:center;margin-top:3px}
+.lever .pm button{width:30px;height:28px;border-radius:8px;border:2px solid var(--gas);
+  background:#fff;color:var(--gasdeep);font-size:16px;font-weight:800;cursor:pointer;line-height:1}
+.lever .pm button:active{transform:scale(.94)}
+.lever .pm button:disabled{border-color:#ddd6c4;color:#c8c1ae}
+.lever.lit{border-color:var(--gas);background:#f2f7ff}
+#runbtn{
+  display:block;width:100%;margin-top:11px;padding:14px;border:none;border-radius:14px;
+  background:linear-gradient(180deg,var(--tomato),#c23f2f);color:#fff;
+  font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:19px;letter-spacing:.5px;
+  cursor:pointer;box-shadow:0 4px 0 #8f2c20;
+}
+#runbtn:active{transform:translateY(2px);box-shadow:0 2px 0 #8f2c20}
+#runbtn:disabled{background:#b8b2a2;box-shadow:0 4px 0 #918c7e;cursor:default}
+
+/* ---------- expansion card ---------- */
+.oppo{background:#eef5ff;border:2px dashed var(--gas);border-radius:14px;padding:11px 13px;margin:10px 0;box-shadow:var(--shadow)}
+.oppo h3{margin:0 0 3px;font-size:16px;color:var(--gasdeep)}
+.oppo p{margin:0 0 8px;font-size:13px;line-height:1.4}
+.oppo .odds{font-family:"IBM Plex Mono",monospace;font-size:12px;margin-bottom:8px}
+.oppo button{border:2px solid var(--gas);background:#fff;color:var(--gasdeep);border-radius:11px;
+  padding:9px 13px;font-weight:700;font-size:14px;cursor:pointer;margin-right:6px}
+
+/* ---------- log ---------- */
+#log{margin-top:10px;display:flex;flex-direction:column;gap:4px}
+.logline{font-size:12.5px;background:rgba(253,250,242,.9);border-radius:9px;padding:5px 10px;border:1px solid var(--paperedge)}
+.logline.good{border-left:4px solid var(--parsley)}
+.logline.bad{border-left:4px solid var(--tomato)}
+.logline.info{border-left:4px solid var(--gas)}
+.logline.gold{border-left:4px solid var(--butter);background:#fffbe9}
+
+/* ---------- overlays ---------- */
+#overlay{position:fixed;inset:0;background:rgba(40,49,60,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
+#overlay.show{display:flex}
+.ocard{background:var(--paper);border-radius:18px;max-width:440px;width:100%;padding:22px 20px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.35);max-height:86vh;overflow:auto}
+.ocard h2{font-size:24px;margin:6px 0 8px}
+.ocard p{font-size:14.5px;line-height:1.5;text-align:left}
+.ocard .big{font-size:52px;line-height:1;margin:4px 0}
+.ocard button{margin-top:12px;padding:12px 22px;border:none;border-radius:12px;background:var(--gas);
+  color:#fff;font-weight:800;font-size:16px;cursor:pointer;font-family:"Bricolage Grotesque",sans-serif}
+.starpop{display:inline-block;animation:starpop .7s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes starpop{from{transform:scale(0) rotate(-90deg)}to{transform:scale(1) rotate(0)}}
+
+/* ---------- footer ---------- */
+footer{position:fixed;bottom:0;left:0;right:0;background:rgba(244,241,232,.95);border-top:1.5px solid var(--grout);backdrop-filter:blur(4px)}
+.fin{max-width:520px;margin:0 auto;display:flex;gap:6px;padding:8px 12px}
+.fin button{flex:1;font-size:11.5px;font-weight:700;padding:8px 4px;border-radius:9px;border:1.5px solid var(--paperedge);background:var(--paper);color:var(--ink2);cursor:pointer}
+.fin button:active{transform:scale(.97)}
+
+.steam{opacity:.7}
+.steam path{stroke:var(--ink2);stroke-width:1.6;fill:none;stroke-linecap:round;
+  stroke-dasharray:20;animation:steam 2.4s linear infinite}
+.steam path:nth-child(2){animation-delay:.8s}
+@keyframes steam{from{stroke-dashoffset:40;opacity:0}30%{opacity:.8}to{stroke-dashoffset:0;opacity:0}}
+.flick{animation:flick .55s infinite alternate ease-in-out;transform-origin:center 80%}
+@keyframes flick{from{transform:scaleY(1) skewX(0)}to{transform:scaleY(1.14) skewX(-3deg)}}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+button:focus-visible{outline:3px solid var(--butter);outline-offset:2px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="i-knife" viewBox="0 0 24 24"><path d="M3 20l9-9c3-3 7-4 9-4-.5 2.5-2 5.5-5 8l-2 1.6L5.5 21z" fill="#9aa7b6"/><path d="M3 20l6-6 2 2-5.5 5z" fill="#c2691e"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.5l2.7 6 6.3.7-4.7 4.3 1.3 6.2L12 16.6l-5.6 3.1 1.3-6.2L3 9.2l6.3-.7z" fill="#f2c14e" stroke="#c2913a" stroke-width="1"/></symbol>
+<symbol id="i-coin" viewBox="0 0 24 24"><ellipse cx="12" cy="17" rx="8" ry="3.4" fill="#c2691e"/><ellipse cx="12" cy="13.5" rx="8" ry="3.4" fill="#e08a3c"/><ellipse cx="12" cy="10" rx="8" ry="3.4" fill="#c2691e"/><ellipse cx="12" cy="7" rx="8" ry="3.4" fill="#f2c14e" stroke="#c2913a"/></symbol>
+<symbol id="i-toque" viewBox="0 0 24 24"><path d="M6 10a4.5 4.5 0 012-8.4A5 5 0 0116 2a4.5 4.5 0 012 8v6H6z" fill="#fff" stroke="#9aa7b6" stroke-width="1.4"/><rect x="6" y="17" width="12" height="4" rx="1.5" fill="#fff" stroke="#9aa7b6" stroke-width="1.4"/></symbol>
+<symbol id="i-mug" viewBox="0 0 24 24"><g class="steam"><path d="M9 6c0-2 1.5-2 1.5-4"/><path d="M13.5 6c0-2 1.5-2 1.5-4"/></g><path d="M5 9h11v7a4 4 0 01-4 4H9a4 4 0 01-4-4z" fill="#3a7bd5"/><path d="M16 10h2a2.5 2.5 0 010 5h-2" fill="none" stroke="#3a7bd5" stroke-width="2"/></symbol>
+<symbol id="i-flame" viewBox="0 0 24 24"><path class="flick" d="M12 2C13 6 17 8 17 13a5 5 0 01-10 0c0-2 .8-3.4 2-5 .3 1.4 1 2 2 2.4C10.4 8 10.6 4.6 12 2z" fill="#e08a3c"/><path d="M12 9c.6 2 2.6 2.8 2.6 5A2.7 2.7 0 0112 16.6 2.7 2.7 0 019.4 14c0-2 2-3 2.6-5z" fill="#3a7bd5"/></symbol>
+<symbol id="i-mega" viewBox="0 0 24 24"><path d="M3 10v4l4 .5V9.5z" fill="#c2691e"/><path d="M7 9.5L19 4v16L7 14.5z" fill="#e08a3c"/><path d="M8.5 15l1 5 3-.6-1-4z" fill="#c2691e"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#3a7bd5"/><path d="M12 3a14 14 0 000 18M12 3a14 14 0 010 18M3.5 9h17M3.5 15h17" stroke="#fff" stroke-width="1.3" fill="none"/></symbol>
+<symbol id="i-pan" viewBox="0 0 24 24"><ellipse cx="10" cy="14" rx="8" ry="5" fill="#39424e"/><ellipse cx="10" cy="13" rx="8" ry="5" fill="#5b6672"/><path d="M17.5 12l5-3" stroke="#39424e" stroke-width="2.4" stroke-linecap="round"/></symbol>
+</defs>
+</svg>
+
+<div id="app">
+  <header>
+    <svg class="burner" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-flame"/></svg>
+    <h1>SERVICE!<small>from the plonge to the world</small></h1>
+    <div class="whenwhere">
+      <div class="season" id="season">Spring, Year 1</div>
+      <div class="rungname" id="rungname">Dishwasher</div>
+    </div>
+  </header>
+  <div class="ladder" id="ladder" title="the climb"></div>
+  <div class="stats" id="stats"></div>
+  <div id="ventures"></div>
+  <div id="rail"><div class="railbar" title="the ticket printer"></div><div id="tickets"></div></div>
+  <div id="oppobox"></div>
+  <div id="pass">
+    <h2>THE PASS <span class="budget">points left: <span class="flames" id="flames"></span></span></h2>
+    <div class="levers" id="levers"></div>
+    <button id="runbtn">RUN SERVICE →</button>
+  </div>
+  <div id="log"></div>
+</div>
+
+<div id="overlay"><div class="ocard" id="ocard"></div></div>
+
+<footer><div class="fin">
+  <button id="b-save">💾 save</button>
+  <button id="b-export">⤓ export</button>
+  <button id="b-import">⤒ import</button>
+  <button id="b-new">✚ new career</button>
+</div></footer>
+<input type="file" id="filein" accept=".json" style="display:none">
+<script>
+'use strict';
+/* ============ CONFIG (ported from harness v0.9) ============ */
+const RUNGS=["Dishwasher","Kitchen porter","Apprentice","Commis","Demi chef de partie","Chef de partie","Sous chef","Head chef","Executive chef","Chef-patron","Two kitchens","London","New York","The World"];
+const CFG={maxTurns:80,budget:5,execBonus:1,londonBonus:1,
+ craftGain:4,craftCap:120,repGain:3,repFloor:.5,teamGain:3,restGain:12,
+ promoSkill:[10,18,26,34,44,54,64,74],promoMin:3,promoInt:-2,promoWS:3,promoWR:1,promoWN:.5,
+ wages:[1,1.2,1.5,2,2.5,3,4,6,9],
+ exps:[
+  {name:"Your own place",cost:150,dist:1,market:1,bet:[-1.5,2,2,1]},
+  {name:"The Second",cost:300,dist:1.2,market:1.2,bet:[-1.8,1.5,2,1.5]},
+  {name:"London",cost:550,dist:1.6,market:2.2,bet:[-2,1,2,2]},
+  {name:"New York",cost:1200,dist:2.2,market:3.5,bet:[-2.2,.8,2,2.5]},
+  {name:"The World",cost:2200,dist:3,market:6,bet:[-2.5,.5,2,3]}],
+ betCool:4,failFrac:.7,failRep:15,borrow:200,debtLimit:-300,debtInt:.05,
+ ventureInc:13,mqDecay:3,mqMaint:6,mqHireBase:40,mqHireNet:.4,mqScandal:25,
+ drainBase:6,drainRung:.5,drainVent:1.2,eReset:40,setbackRep:15,setbackCap:2,
+ repDecay:.03,repDecayRung:.004,rust:.992,
+ starInt:-5.5,starEsc:1.2,starWS:3,starWMQ:2,starWR:1,starIncMult:1.4,starRep:12};
+const sig=x=>1/(1+Math.exp(-x));
+
+/* ============ EFFECT UNITS ============ */
+/* fx: S R N E prot flat units; Ci = multiples of current income; MQ on venture in play; flag; mod */
+const U={r1:4,r2:8,r3:14,s1:3,s2:6,e1:8,e2:16,e3:24,n1:4,n2:8,ci1:.8,ci2:1.6,ci3:3};
+
+/* ============ EVENTS ============ */
+/* b: rung band [lo,hi]; ex: exposure weights; ga: gates; once; sc: scene; ch: choices */
+const EVENTS=[
+/* ---- BAND A : the plonge ---- */
+{id:"A1",ti:"The Pan",b:[0,1],ex:{base:1},sc:"A saucepan hits the wall half a meter from your head. Nobody looks up. The sauce it held is already being remade, by a man who is crying slightly.",ch:[
+ {t:"Keep your head down. Watch how the remake is done.",fx:{S:U.s1,E:-U.e1},say:"You learn something about butter, and about walls."},
+ {t:"Catch the chef's eye and hold it.",roll:{stat:"half",win:{fx:{R:U.r1},say:"A pause. A nod. The kitchen files it away."},lose:{fx:{E:-U.e2},say:"You carry the flour sacks for a month."}}}]},
+{id:"A2",ti:"Staff Meal",b:[0,1],ex:{base:1},ga:{S:15},sc:"The commis who cooks staff meal is off sick. The sous points a ladle at you: “Feed sixteen people. Don't be interesting.”",ch:[
+ {t:"Don't be interesting.",fx:{R:U.r1,flag:"NOTICED"},say:"Sixteen clean plates. The sous grunts, which is a medal."},
+ {t:"Be interesting.",roll:{stat:"S",pivot:30,win:{fx:{R:U.r2,flag:"NOTICED"},say:"Silence, then seconds. The good silence."},lose:{fx:{R:-U.r1},say:"“The dishwasher made foam,” someone says, forever."}}}]},
+{id:"A3",ti:"The Walk-In at 2 a.m.",b:[0,1],ex:{base:1},sc:"The fish delivery arrives four hours early. You are the only one here. Forty kilos of ice and turbot and nobody to tell you where anything goes.",ch:[
+ {t:"Work it out. Put everything away right.",fx:{E:-U.e1,N:U.n1},say:"In the morning the sous checks the walk-in twice, then looks at you differently."},
+ {t:"Leave a note.",fx:{R:-U.r1},say:"Notes are for front of house."}]},
+{id:"A4",ti:"Ilya",b:[0,1],ex:{base:1},once:1,sc:"The other dishwasher never hurries and is always finished first. Tonight he says, unasked: “You wash in the wrong order. Come, I show you.”",ch:[
+ {t:"Let him show you.",fx:{N:U.n1,mod:"plonge"},say:"There is an order to everything. You will use this forever."},
+ {t:"You know how to wash dishes.",say:"Ilya shrugs. Ilya-shaped doors close."}]},
+{id:"A5",ti:"Payday, Short",b:[0,1],ex:{lowC:2,base:.3},sc:"The envelope is light. The owner's arithmetic is famous for favoring the owner.",ch:[
+ {t:"Say it to his face.",roll:{stat:"half",win:{fx:{Ci:U.ci1,R:U.r1},say:"He pays, annoyed. The kitchen notices the spine."},lose:{fx:{R:-U.r1},say:"The office has a memory too."}}},
+ {t:"Let it go.",fx:{Ci:-.4},say:"Cheaper than a fight. Probably."},
+ {t:"Mention it to the sous, quietly.",gate:{N:15},fx:{Ci:U.ci1,N:U.n1},say:"It gets fixed without weather. That's what networks are."}]},
+{id:"A6",ti:"The Flare",b:[0,1],ex:{lowE:2,base:.3},sc:"Fryer flare — sudden, wrong. The commis nearest it freezes.",ch:[
+ {t:"Move. Cloth, lid, done.",fx:{R:U.r2,E:-U.e2},say:"Fast hands get remembered."},
+ {t:"Shout and step back.",say:"Safe. Someone else is the story tonight."}]},
+{id:"A7",ti:"Sunday Double",b:[0,1],ex:{base:1},sc:"The other porter simply doesn't appear. The double is yours if you want it, says the sous, in a tone suggesting the question is decorative.",ch:[
+ {t:"Take the double.",fx:{Ci:U.ci2,E:-U.e2},say:"Your feet file a complaint. Your pocket overrules it."},
+ {t:"Keep your Sunday.",fx:{E:U.e1},say:"The sous's tone files this away."}]},
+{id:"A8",ti:"The Menu French",b:[0,1],ex:{base:1},sc:"You can't read the menu you wash the evidence of. Neither, it turns out, can Ilya. The apprentice — seventeen, merciless — holds classes at 1 a.m.: nage, brunoise, à la minute.",ch:[
+ {t:"The 1 a.m. lessons.",fx:{S:U.s1,N:U.n1,E:-U.e1},say:"You repeat the words over the sinks like prayers."},
+ {t:"Point at the plates like everyone else.",say:"The words stay foreign a while longer."}]},
+/* ---- BAND B : the stations ---- */
+{id:"B1",ti:"Marguerite's Shortcut",b:[2,4],ex:{lowE:2,base:.3},sc:"Marguerite whisks like a metronome and cuts every corner the eye can't see. “The stock cube exists,” she says. “The chef's palate is forty years of cigarettes. Choose sleep.”",ch:[
+ {t:"Choose sleep.",fx:{E:U.e1,flag:"SHORTCUT"},say:"You sleep. Something unlearns itself, quietly."},
+ {t:"Make the stock.",fx:{E:-U.e1,S:U.s1},say:"Four hours. Bones know things cubes don't."}]},
+{id:"B2",ti:"The Tasting Spoon",b:[2,4],ex:{craft:2},once:1,sc:"The chef tastes your sauce without a word and walks away. Thursday, it's on the menu. Nobody tells you — you find out from the printed card.",ch:[
+ {t:"Read the card again. Once more.",fx:{R:U.r1,S:U.s1},say:"Your sauce. His menu. The order of those words will change someday."}]},
+{id:"B3",ti:"The Stage",b:[2,4],ex:{base:1},ga:{E:50},sc:"The starred place across town takes stagiaires on Mondays — your day off. Unpaid. The chef there is a lunatic in the good way.",ch:[
+ {t:"Give them your Mondays.",fx:{S:U.s2,E:-U.e2,Ci:-.4},say:"You learn what a kitchen sounds like when nobody has to shout."},
+ {t:"Keep your Mondays.",fx:{E:U.e1},say:"A life, briefly."}]},
+{id:"B4",ti:"The Cut",b:[2,4],ex:{lowE:2,base:.2},sc:"Deep, thumb, mid-service — your own fault, the tiredness fault. The board is red where it shouldn't be.",ch:[
+ {t:"Tape it, glove it, finish service.",fx:{E:-U.e2,R:U.r1},say:"It holds. Barely. The scar will read like a diploma."},
+ {t:"Step off the line.",fx:{R:-U.r1,E:U.e1},say:"The correct choice, which is why it costs."}]},
+{id:"B5",ti:"The Old Man's Sunday",b:[2,4],ex:{base:.8},ga:{N:20},once:1,sc:"Chef Brasse, who has thrown cookware at you for two years, asks — asks — whether you'd help him cook his friend's funeral lunch on Sunday. Unpaid, obviously.",ch:[
+ {t:"Sunday, then.",fx:{N:U.n2,flag:"BRASSE_DEBT"},say:"The Old Man remembers everything. Including this."},
+ {t:"Decline politely.",say:"The pans resume Monday."}]},
+{id:"B6",ti:"The Competition",b:[2,4],ex:{base:.8},ga:{S:30},sc:"A young chefs' prize: one plate, twenty minutes, judges with pens. Marguerite has already entered.",ch:[
+ {t:"Enter.",fx:{E:-U.e1},roll:{stat:"S",pivot:45,win:{fx:{R:U.r2},say:"Second place. In this room, second place is a name."},lose:{fx:{R:-U.r1},say:"Public is public both ways."}}},
+ {t:"Watch Marguerite.",fx:{N:U.n1},say:"She places third and blames the plates. You buy the beer."}]},
+{id:"B7",ti:"The Fish Is Off",b:[2,4],ex:{base:1},sc:"You smell it before you see it. The chef says serve it; the margin says serve it; your nose says what it says.",ch:[
+ {t:"Refuse, loudly.",fx:{R:-U.r1,flag:"SPINE"},say:"The chef stares. The brigade doesn't breathe. The fish does not go out."},
+ {t:"Serve it.",roll:{stat:"hidden",win:{say:"Nothing happens. This time."},lose:{fx:{R:-U.r2},say:"A guest, a doctor, a phone call. The margin was not worth this."}}},
+ {t:"Swap it with the morning van, quietly.",gate:{N:25},fx:{S:U.s1,N:U.n1},say:"Nobody ever knows. The best outcomes are invisible ones."}]},
+{id:"B8",ti:"The Side Gig",b:[2,4],ex:{fastC:2,base:.3},sc:"A waiter's cousin needs a cook for cash weddings — Sundays, no questions, no names. The chef's rule about outside work is also real, the way weather is real.",ch:[
+ {t:"Take the work.",fx:{Ci:U.ci2,E:-U.e1},roll:{stat:"hidden",win:{say:"The envelopes are thick and quiet."},lose:{fx:{R:-U.r1},say:"Kitchens hear everything. Chefs hear more."}}},
+ {t:"Decline.",say:"Your Sundays stay poor and legal."}]},
+{id:"B9",ti:"Family Meal, Your Turn",b:[2,4],ex:{base:1},sc:"The rotation lands on you, and the dish living rent-free in your head sees its chance. The brigade is the hardest room you'll ever cook for: sixteen people who know exactly how everything is done, and say so with their forks.",ch:[
+ {t:"Test the dish.",roll:{stat:"S",pivot:38,win:{fx:{S:U.s1,R:U.r1},say:"The sous asks for the recipe. That's the medal."},lose:{fx:{S:U.s1},say:"The forks were eloquent. You learned anyway."}}},
+ {t:"Pasta again.",fx:{E:U.e1},say:"The brigade cheers. Ambition rests."}]},
+{id:"B10",ti:"The Broken Sauce",b:[2,4],ex:{base:1},sc:"Two hundred covers and the beurre blanc splits at 19:55 like a marriage. The chef is at the pass. You have the width of one ticket to decide who finds out.",ch:[
+ {t:"Rebuild it in four minutes.",roll:{stat:"S",pivot:42,win:{fx:{S:U.s1,R:U.r1},say:"Nobody ever knows. That's mastery."},lose:{fx:{R:-U.r1,E:-U.e1},say:"Everybody knows."}}},
+ {t:"Call the sous.",fx:{N:U.n1,R:-U.r1},say:"Help is remembered two ways."}]},
+/* ---- BAND C : the brigade ---- */
+{id:"C1",ti:"Your First Commis",b:[5,6],ex:{base:1},sc:"There is now a person whose mistakes are your mistakes. He holds the knife like it owes him money.",ch:[
+ {t:"Train him properly.",fx:{prot:1,E:-U.e1},say:"Slow now, fast later. That's the whole trade."},
+ {t:"Two extra hands.",say:"Output now. Nothing later."}]},
+{id:"C2",ti:"The Sous Goes Down",b:[5,6],ex:{base:.8},once:1,sc:"Scaffolding, ankle, eight weeks. The chef looks down the line, and the line looks at its shoes.",ch:[
+ {t:"“I'll take his stations.”",fx:{E:-U.e2,R:U.r2,mod:"promoBonus"},say:"Eight weeks of two jobs. The schedule notices."},
+ {t:"Keep your station and your health.",say:"Someone else takes the chance."}]},
+{id:"C3",ti:"The Lateral Offer",b:[5,6],ex:{highR:2,base:.2},sc:"The bistro on the hill offers more money and a lesser kitchen. Marguerite took theirs last year and her sauces have gotten… rested.",ch:[
+ {t:"Go.",fx:{Ci:U.ci2,E:U.e1,mod:"slowCraft"},say:"Comfort has a flavor. It's fine."},
+ {t:"Stay.",fx:{R:U.r1},say:"Loyalty is a currency here."}]},
+{id:"C4",ti:"The Notebook",b:[5,6],ex:{craft:2},once:1,sc:"Three years of stolen technique in your own hand. The chef finds it on the shelf and reads for a long time. Then: “Page forty is wrong. Show me you know why.”",ch:[
+ {t:"Show him.",roll:{stat:"S",pivot:50,win:{fx:{S:U.s2,R:U.r1},say:"He corrects page forty himself. That's a gift."},lose:{fx:{S:U.s1},say:"He corrects it with less ceremony."}}}]},
+{id:"C5",ti:"V., First Contact",b:[5,6],ex:{highR:2},once:1,sc:"A review of the restaurant. One line concerns you: “the fish course, at least, was cooked by someone paying attention.” You will read this line many times over the next thirty years.",ch:[
+ {t:"Cut it out. Keep it.",fx:{R:U.r1,flag:"V_KNOWS"},say:"V. noticed. V. notices everything, eventually."}]},
+{id:"C6",ti:"Marguerite Proposes a Trade",b:[5,6],ex:{base:.8},ga:{N:40},once:1,sc:"Menus travel. She'll show you theirs before it prints if you show her yours. Everyone does it, she says, which is what everyone says.",ch:[
+ {t:"Trade.",fx:{N:U.n2},roll:{stat:"hidden",win:{say:"Useful. Quiet. Repeatable."},lose:{fx:{R:-U.r2},say:"It surfaces. The chef uses the word 'loyalty' once, softly."}}},
+ {t:"Decline.",fx:{R:U.r1},say:"The chef learns of it eventually. Chefs learn everything eventually."}]},
+{id:"C7",ti:"The Hours",b:[5,6],ex:{lowE:1.5,base:.4},sc:"The brigade counts its hours out loud one night, which is against the unwritten rules. There is talk of talking to the owner.",ch:[
+ {t:"Stand with the brigade.",fx:{N:U.n2,R:-U.r1},say:"The kitchen remembers who stood where."},
+ {t:"Stay out of it.",fx:{E:U.e1},say:"You sleep. The talk fails without the sous."}]},
+{id:"C8",ti:"Private Dinners",b:[5,6],ex:{fastC:2,base:.3},sc:"A regular with a large apartment and larger friends offers real money for you to cook his dinner parties. “The restaurant doesn't need to know,” he says, showing exactly how much he knows about restaurants.",ch:[
+ {t:"Cook them.",fx:{Ci:U.ci2,E:-U.e1},roll:{stat:"hidden",win:{say:"The apartment has better pans than the restaurant."},lose:{fx:{R:-U.r1},say:"The chef hears. The chef always hears."}}},
+ {t:"Decline.",fx:{R:U.r1},say:"The chef hears about that instead."}]},
+{id:"C9",ti:"The Inventory",b:[5,6],ex:{base:1},sc:"The langoustine numbers haven't added up for a month. Then one night you see how, and who. He has three children and a gambling problem, in the other order.",ch:[
+ {t:"Handle it quietly.",fx:{N:U.n1},say:"It stops. The kitchen knows what you didn't do."},
+ {t:"Report it.",fx:{R:U.r1,N:-U.n1},say:"Correct and expensive are often the same thing."}]},
+{id:"C10",ti:"The New Chef",b:[5,6],ex:{base:.8},once:1,sc:"The Old Man retires to a village and a rumor of vegetables. His replacement is thirty-four, plates with tweezers, and says “concept” without irony. Everything you know is suddenly historical.",ch:[
+ {t:"Learn the new school.",fx:{S:U.s1,E:-U.e1},say:"Tweezers, it turns out, are also a technique."},
+ {t:"Cook like Brasse taught you.",fx:{R:-U.r1,flag:"SPINE"},say:"Some inheritances don't negotiate."}]},
+/* ---- BAND D : the pass ---- */
+{id:"D1",ti:"The Menu Is Yours",b:[7,8],ex:{base:1.2},once:1,sc:"For the first time, nobody above you has an opinion that counts. The printer is waiting.",ch:[
+ {t:"Evolution, not revolution.",fx:{R:U.r1},say:"Safe. Solid. The regulars exhale."},
+ {t:"The menu you've written in your head for ten years.",roll:{stat:"S",pivot:62,win:{fx:{R:U.r3},say:"The room gets loud, then full, then booked."},lose:{fx:{R:-U.r2},say:"“Ambitious” — a word critics sharpen."}}}]},
+{id:"D2",ti:"Tomas",b:[5,8],ex:{base:.8},once:1,sc:"A stagiaire who does the walk-in at 2 a.m. without being asked, and washes in the right order without being shown. You recognize something. It is your own face, twenty years ago, hungry.",ch:[
+ {t:"Train him — properly, the years-long way.",fx:{prot:2,E:-U.e1,flag:"TOMAS"},say:"He stays. He learns. He watches you like a recipe."},
+ {t:"Free labor is free.",fx:{Ci:.3},say:"He leaves in spring, for someone who teaches."}]},
+{id:"D3",ti:"The Owner's Nephew",b:[7,8],ex:{base:1},sc:"He arrives with his own knives, which is the only professional thing about him.",ch:[
+ {t:"Manage him into harmlessness.",fx:{E:-U.e1},say:"Garnish duty. Forever."},
+ {t:"Break him in front of the brigade.",fx:{N:U.n1,R:-U.r1},say:"The kitchen laughs. The office doesn't."},
+ {t:"Actually teach him.",fx:{E:-U.e2,prot:1},say:"One in five nephews is a person. This one, maybe."}]},
+{id:"D4",ti:"V. Books a Table",b:[7,8],ex:{highR:2.5},sc:"Thursday, 20:00, party of two, the name misspelled the way V. always misspells it.",ch:[
+ {t:"Cook every plate yourself.",fx:{E:-U.e2},roll:{stat:"S",pivot:60,win:{fx:{R:U.r3},say:"The review uses the word 'conviction'. Bookings double."},lose:{fx:{R:-U.r1},say:"A tired hand shakes. V. sees hands."}}},
+ {t:"Trust the brigade.",gate:{teamLife:30},roll:{stat:"team",win:{fx:{R:U.r2,prot:1},say:"They knew he trusted them. It's in the food."},lose:{fx:{R:-U.r1},say:"One plate wobbles. One is enough."}}},
+ {t:"Comp, pour, charm.",gate:{N:50},fx:{R:U.r1},say:"V. notices charm and discounts it. Still."}]},
+{id:"D5",ti:"The Books",b:[5,8],ex:{base:.8},ga:{N:40},once:1,sc:"By accident, a spreadsheet left open: the restaurant loses money every month you've worked here. The food was never the problem.",ch:[
+ {t:"Bring the owner a plan.",fx:{flag:"OPERATOR"},say:"You've seen the machine's insides now. That knowledge compounds."},
+ {t:"Stay in your lane.",say:"The lane is comfortable."}]},
+{id:"D6",ti:"The Walkout",b:[7,8],ex:{lowE:1.5,lowTeam:2},sc:"Push a brigade past the line long enough and one Friday, between services, four whites are folded on the pass with the aprons on top. It is very quiet.",ch:[
+ {t:"Go to the bar where they are. Buy the beer.",fx:{R:-U.r1,N:U.n1},say:"Most return Monday. All of them remember."},
+ {t:"Hire through the weekend.",fx:{Ci:-U.ci2},say:"Warm bodies, cold food, expensive lesson."},
+ {t:"Cook Saturday with four people.",fx:{E:-U.e3,R:U.r2},say:"The legend of that Saturday outlives everyone in it."}]},
+{id:"D7",ti:"The Group's Offer",b:[7,7],ex:{highR:2},once:1,sc:"A hotel group wants an executive chef: triple the money, a laminated org chart, food-cost targets in bold. This is how the top of the ladder usually looks — like a defeat with a salary.",ch:[
+ {t:"Take it.",fx:{mod:"promoBonus",Ci:U.ci1},say:"The org chart is laminated. Your name is embroidered. Both feel strange."},
+ {t:"Hold out.",say:"Pride has a price, and pays interest. Sometimes."}]},
+{id:"D8",ti:"Moonlight Consulting",b:[7,8],ex:{fastC:2,base:.3},sc:"A rival group will pay handsomely for your eyes on their menus — quietly. Head chefs' eyes are the last thing they legally own.",ch:[
+ {t:"Consult.",fx:{Ci:U.ci2,E:-U.e1},roll:{stat:"hidden",win:{say:"Quiet money. The quietest kind."},lose:{fx:{R:-U.r1},say:"Word travels. Words always travel."}}},
+ {t:"“My eyes are spoken for.”",fx:{R:U.r1},say:"That travels too — the good way."}]},
+{id:"D9",ti:"The Food Cost Target",b:[7,8],ex:{base:1},sc:"An email with your name in it and a number in bold: three points off food cost by Q3. Nobody writes how in these emails. How is what they pay you for. Also what they fire you for.",ch:[
+ {t:"Cheat the quality.",fx:{Ci:U.ci1},roll:{stat:"hidden",win:{say:"Nobody notices. You notice."},lose:{fx:{R:-U.r2},say:"A regular notices. Regulars are how restaurants die."}}},
+ {t:"Find it honestly.",roll:{stat:"S",pivot:60,win:{fx:{Ci:U.ci1,R:U.r1},say:"Waste, cuts, the ugly fish nobody orders. Found."},lose:{fx:{E:-U.e2},say:"Found — the hard, slow way."}}},
+ {t:"Refuse.",fx:{R:-U.r1,N:U.n1},say:"The office frowns. The kitchen stands taller."}]},
+{id:"D10",ti:"The Four Hands",b:[7,8],ex:{highR:1.5,base:.3},ga:{R:50},sc:"A charity gala: your food beside a name you grew up reading. He turns out to be shorter than his books and kinder than his reputation.",ch:[
+ {t:"Cook it.",fx:{R:U.r2,N:U.n2,E:-U.e1},say:"Two hundred plates, four hands, one story you'll tell forever."},
+ {t:"Decline.",fx:{E:U.e1},say:"The invitation does not repeat. They rarely do."}]},
+/* ---- BAND E : chef-patron ---- */
+{id:"E1",ti:"The Empty Tuesday",b:[9,10],ex:{base:1.2},sc:"Full Fridays, dead Tuesdays. The rent does not observe the difference.",ch:[
+ {t:"Prix-fixe Tuesdays.",roll:{stat:"half",win:{fx:{Ci:U.ci1},say:"Tuesday finds its people."},lose:{fx:{Ci:-U.ci1},say:"Cheap Tuesday cannibalizes full-price Wednesday. Ask any accountant, afterwards."}}},
+ {t:"Close Tuesdays.",fx:{E:U.e1,Ci:-.4},say:"The staff love you. The accountant doesn't."},
+ {t:"Wine dinners with faces you know.",gate:{N:50},fx:{Ci:U.ci1,N:U.n1},say:"Twenty people who tell forty people."}]},
+{id:"E2",ti:"The Landlord's Letter",b:[9,10],ex:{base:1},sc:"Registered post. The new figure has a comma in a new place.",ch:[
+ {t:"Pay.",fx:{Ci:-U.ci2},say:"The comma stays. So do you."},
+ {t:"Renegotiate.",gate:{N:55},roll:{stat:"N",pivot:60,win:{say:"A handshake, a compromise, a bottle sent up. The comma retreats."},lose:{fx:{Ci:-U.ci2},say:"The landlord's lawyer eats free elsewhere."}}},
+ {t:"Relocate.",fx:{Ci:-U.ci3},roll:{stat:"half",win:{say:"The regulars follow. Habits can move after all."},lose:{fx:{R:-U.r1},say:"Some regulars are married to the room, not the food."}}}]},
+{id:"E3",ti:"The Napkin",b:[9,10],ex:{fastC:2.5},once:1,sc:"The Dane orders the tasting menu alone, pays in full, and leaves a napkin with a number on it. The number is generous. Napkin numbers always are — it's the contract underneath that has the weather in it.",ch:[
+ {t:"Take the money.",fx:{Ci:U.ci3,flag:"DANE",mod:"hireMinus"},say:"The money is real. So are the strings, though they don't show yet."},
+ {t:"Decline.",fx:{flag:"INDEPENDENT",R:U.r1},say:"The trade papers love a refusal. The Dane smiles like a man with time."}]},
+{id:"E5",ti:"The Inspector",b:[9,10],ex:{base:1},sc:"Clipboard, gloves, the walk-in, the gap behind the stove that every kitchen on earth has.",ch:[
+ {t:"Walk him through it yourself.",roll:{stat:"MQ",win:{say:"Clean sheet. The gap behind the stove keeps its secrets."},lose:{fx:{Ci:-U.ci1,R:-U.r1},say:"A fine, and a notice on the door in municipal yellow."}}}]},
+{id:"E6",ti:"The Sous Gets an Offer",b:[9,10],ex:{highMQ:2},sc:"Your best person is wanted elsewhere — the tax on having best people.",ch:[
+ {t:"Match the money.",fx:{Ci:-U.ci2,MQ:U.s2},say:"Kept. Money keeps people the way rope keeps boats."},
+ {t:"The loyalty conversation.",gate:{teamLife:40},roll:{stat:"team",win:{fx:{MQ:U.s1,N:U.n1},say:"They stay for the reason money can't buy."},lose:{fx:{MQ:-U.s2},say:"They go anyway. It stings double."}}},
+ {t:"Bless the departure.",fx:{MQ:-U.s2,prot:2},say:"Your name in their story is worth more than their labor in yours."}]},
+{id:"E7",ti:"The Signature Dish",b:[9,10],ex:{rust:2},once:1,sc:"The dish that made your name is now made four hundred times a month by hands that aren't yours — and yesterday, for the first time, it bored you.",ch:[
+ {t:"Reinvent it.",roll:{stat:"S",pivot:62,win:{fx:{R:U.r2},say:"“The second act,” V. writes. The room leans in again."},lose:{fx:{R:-U.r1},say:"“Why fix it,” everyone asks, having just been shown why."}}},
+ {t:"Leave it alone.",fx:{mod:"repDrip"},say:"Museums are calm places."}]},
+{id:"E8",ti:"The Second Kitchen's Bad Night",b:[9,10],ex:{lowMQ:2.5},sc:"Saturday, 21:40, the phone: a furious guest, a screaming printer, your name on the door of a room you're not in. The whole problem of your life now, in one call.",ch:[
+ {t:"Drive over. Run the pass yourself.",fx:{E:-U.e2,MQ:U.s2,R:U.r1},say:"The story travels well: the chef who came."},
+ {t:"Talk the manager through it.",roll:{stat:"MQ",win:{fx:{MQ:U.s1},say:"They land it. Growth, audible down a phone line."},lose:{say:"Some nights only hands can fix."}}},
+ {t:"“Handle it.”",fx:{mod:"scandalWorse"},say:"Two words. They cost nothing tonight."}]},
+{id:"E9",ti:"The Regular",b:[9,10],ex:{base:.8},once:1,sc:"Fifteen years at table six, Thursdays. The same order for the last five — her order, since his wife died. His family asks if you would cater the wake. There is only one menu for it, and you already know every course.",ch:[
+ {t:"Cook it yourself.",fx:{N:U.n1,E:-U.e1},say:"Thursday will be strange for a while."},
+ {t:"Send your best.",fx:{N:U.n1},say:"Some tables you should carry yourself. You'll know that later."}]},
+{id:"E10",ti:"The Copycat",b:[9,10],ex:{highR:1.5,base:.3},sc:"A restaurant two towns over is serving your menu. Not inspired-by: verbatim, typos included — which is how you know, since the typo was yours.",ch:[
+ {t:"Lawyers.",fx:{Ci:-U.ci1},say:"Lawyers eat first. Always."},
+ {t:"Ignore it.",say:"Flattery at scale is just theft with manners."},
+ {t:"Invite their chef to dinner.",fx:{N:U.n1,R:U.r1},say:"The story is irresistible, and now it's your story."}]},
+/* ---- BAND F : the empire ---- */
+{id:"F1",ti:"The Time Zones",b:[11,13],ex:{base:1},ga:{far:1},once:1,sc:"3 a.m. is now a place you visit weekly. New York closes as you wake; someone always needs a decision at the exact hour you're worst at making them.",ch:[
+ {t:"Build the ops layer.",fx:{Ci:-U.ci2,mod:"opsLayer"},say:"Systems. Dashboards. Distance, partially refunded."},
+ {t:"Fly there quarterly.",fx:{mod:"flyer"},say:"You, in person, still works. On you, it doesn't."}]},
+{id:"F2",ti:"The Brand Deal",b:[11,13],ex:{highR:2},once:1,sc:"A cookware line with your name in a serif font. The money is absurd. The pans, you suspect from the samples, are adequate.",ch:[
+ {t:"Sign.",fx:{Ci:U.ci3},roll:{stat:"hidden",win:{say:"The pans hold. The money holds better."},lose:{fx:{R:-U.r2},say:"The pans warp. The joke follows you."}}},
+ {t:"Decline.",fx:{R:U.r1},say:"The people whose opinion is your actual asset — they notice."}]},
+{id:"F3",ti:"The Documentary",b:[11,13],ex:{highR:2},once:1,sc:"A crew, a director with theories about “fire as memory,” lights in your first kitchen.",ch:[
+ {t:"Let them in.",fx:{R:U.r2,E:-U.e1,S:-U.s1},roll:{stat:"half",win:{fx:{R:U.r2},say:"The edit is kind. Bookings triple on three continents."},lose:{fx:{R:-U.r1},say:"They found the pan-throwing footage. Even bad fame seats covers."}}},
+ {t:"No cameras.",say:"The fire keeps its memories."}]},
+{id:"F4",ti:"London Goes Rogue",b:[11,13],ex:{lowMQ:2},ga:{london:1},sc:"Your London head chef gives an interview containing the phrase “creative differences” and the word “franchise,” in quotation marks that drip.",ch:[
+ {t:"Fire him before print.",fx:{MQ:-U.s2,Ci:-U.ci1},say:"Clean, fast, expensive. The kitchen resets."},
+ {t:"Fly over. Close the door. Repair it.",fx:{E:-U.e2},roll:{stat:"N",pivot:65,win:{fx:{MQ:U.s2*2},say:"Two hours, one bottle, zero journalists. Fixed."},lose:{fx:{R:-U.r2},say:"The divorce goes public anyway. London reads everything."}}},
+ {t:"Stay above it.",fx:{R:-U.r1},say:"“Above it” reads as “absent” in 72-point type."}]},
+{id:"F5",ti:"When Did You Last Work a Service?",b:[11,13],ex:{rust:2.5},sc:"A line cook in your own flagship asks it without malice, which is worse.",ch:[
+ {t:"Work the line for a week, unannounced.",fx:{S:U.s2,E:-U.e1,R:U.r2},say:"The press cannot resist it — and for once the story is true."},
+ {t:"Laugh it off.",say:"The question doesn't repeat. Which is also an answer."}]},
+{id:"F6",ti:"The Old Man's Funeral",b:[11,13],ex:{base:.6},once:1,sc:"Chef Brasse, who threw pans at you for two years and taught you everything the pans were about, is dead at ninety-one. The funeral lunch needs cooking.",scAlt:{BRASSE_DEBT:"Chef Brasse is dead at ninety-one. The funeral lunch needs cooking — and you know exactly what he'd want served. He showed you, that Sunday."},ch:[
+ {t:"Cook it yourself.",say:"Whites, pressed. No cameras. The best service you ever run has forty covers and no menu."},
+ {t:"Send your best people.",say:"You realize, mid-flight to somewhere, that you never once cooked for him."}]},
+{id:"F7",ti:"The Succession Question",b:[11,13],ex:{base:.8},once:1,sc:"An interviewer asks it plainly: after you, what is all this?",ch:[
+ {t:"Name Tomas.",gate:{flag:"TOMAS"},fx:{prot:4,R:U.r1},say:"The empire acquires a future tense. He calls you that evening and says nothing much, which says everything."},
+ {t:"Name no one.",fx:{R:-U.r1},say:"The empire acquires a bus-factor."},
+ {t:"“The name is the succession.”",fx:{flag:"ALL_IN"},say:"The brand outlives the cook. Or doesn't."}]},
+{id:"F8",ti:"The Exit",b:[11,13],ex:{fastC:1.5,base:.4},once:1,sc:"Private equity, a data room, a multiple of earnings that makes your accountant use the word “frankly.”",ch:[
+ {t:"Sell everything.",fx:{ending:"EXIT"},say:""},
+ {t:"Refuse.",fx:{flag:"ALL_IN"},say:"You will die in whites, one way or another."}]},
+{id:"F9",ti:"The Kitchen That Doesn't Need You",b:[11,13],ex:{highMQ:2.5},once:1,sc:"You land unannounced, braced for the usual list, and find… nothing on it. The pass runs clean. The fish is right. A cook you've never met corrects a plate exactly the way you would have — with your own words, which apparently now travel without you.",ch:[
+ {t:"Stay for service, a guest in your own house.",fx:{R:U.r1,E:U.e1,prot:1},say:"You eat at the counter. Someone else's kitchen. Yours."},
+ {t:"Leave before they see you.",say:"A strange lightness, unpriced."}]},
+{id:"F10",ti:"The Airport Question",b:[11,13],ex:{base:.8},sc:"A stranger at gate B44 asks if you're you, and then, kindly, whether the São Paulo one is “real — you know, real real.”",ch:[
+ {t:"“I choose every menu myself.” (true-ish)",roll:{stat:"half",win:{fx:{R:U.r1},say:"He beams. True-ish held, this time."},lose:{fx:{R:-U.r1},say:"His nephew works in the São Paulo kitchen. Ah."}}},
+ {t:"“It's real if the cooking's real.”",fx:{R:U.r1},say:"It quotes well. You half believe it."}]},
+/* ---- BAND G : universal ---- */
+{id:"G2",ti:"The Doctor",b:[0,13],ex:{trigger:1},once:1,sc:"“Your bloodwork reads like a man twenty years older. I'll say this once.”",ch:[
+ {t:"Take a season fully off.",fx:{skipTurn:1},say:"The kitchen survives without you, which is terrible and fine."},
+ {t:"“After the season.”",fx:{mod:"setbackWorse"},say:"There is always a season."}]},
+{id:"G3",ti:"The Dinner You Missed",b:[0,13],ex:{noRest:1.2},sc:"A birthday, a school thing, an anniversary — the empty chair at it was yours.",ch:[
+ {t:"(There is nothing to decide. There was, earlier.)",say:"The game prices everything else. This it only shows."}]},
+{id:"G4",ti:"A Good Day",b:[0,13],ex:{base:.3},sc:"The fish is perfect, the brigade is laughing, service lands like weather. Nothing happens.",ch:[
+ {t:"Nothing happens.",say:"It's the day you'll remember when someone asks why you do this."}]},
+{id:"G5",ti:"Flu Season",b:[0,13],ex:{base:.35},sc:"Half the city is coughing. Next turn will run heavy — plan for it.",ch:[
+ {t:"Noted.",fx:{mod:"fluNext"},say:"Forewarned is half-rested."}]},
+{id:"G6",ti:"Marguerite, Again",b:[2,13],ex:{base:.5},once:1,sc:"Her career runs beside yours like a train on the adjacent track. Sometimes she writes. You always mean to answer.",ch:[
+ {t:"Answer her letter.",fx:{N:U.n1},say:"Forty years of parallel lines, one bridge."},
+ {t:"Mean to.",say:"The letter stays in the drawer with the good pens."}]},
+{id:"G7",ti:"The Knife",b:[4,13],ex:{base:.4},once:1,sc:"Ilya's knife — his second-best, the note said, though you've since learned it was his best — has been sharpened past its life. The steel is thin as a promise.",ch:[
+ {t:"Restore it. There's a man who can. There's always one man who can.",fx:{Ci:-.4,S:U.s1},say:"An edge remembers."},
+ {t:"Buy the new German thing.",fx:{Ci:-.4},say:"The drawer keeps the old one anyway. Drawers understand."}]},
+];
+
+/* ============ PROMOTIONS ============ */
+const PROMOS=[
+ null,
+ {ti:"Kitchen porter",sc:"Someone quits without notice. The chef points at you: “You. You also carry things now.” The raise is theoretical."},
+ {ti:"Apprentice",sc:"Ilya leaves for a ship's kitchen. On your shelf, wrapped in a side towel: his second-best knife. “You wash in the right order now,” the note says. It is the entire note."},
+ {ti:"Commis",sc:"A station of your own. It is the garnish station. It is the least station that exists. It is YOURS, and you clean it like a reliquary."},
+ {ti:"Demi chef de partie",sc:"The demi walks out mid-service on a Wednesday. You cover the sauces without being asked. Thursday, the schedule has your name where his was. Nobody says anything, which is how kitchens promote."},
+ {ti:"Chef de partie",sc:"“The fish is yours,” the chef says — which, in this language, is a knighthood."},
+ {ti:"Sous chef",sc:"The chef's knee is worse than he admits. Tuesdays, you run the pass. Then Tuesdays and Fridays. The word 'sous' arrives on the schedule about a month after the fact of it."},
+ {ti:"Head chef",sc:"An owner who has eaten your food for years makes you the gamble of his life over a handshake and a bad coffee.",scAlt:{BRASSE_DEBT:"The Old Man calls in the middle of the afternoon. “The Belrose. Their chef walked out mid-service, the idiot. I told them there's only one name worth calling. Don't embarrass me.”"}},
+ {ti:"Executive chef",sc:"The group. The suits. The laminated org chart. Your whites now have your name embroidered on them — which is what they do to you when you stop needing whites."},
+];
+
+/* ============ EXPANSION SET-PIECES ============ */
+const XP=[
+ {stage1:{ti:"The Corner Site",sc:"A lease on a corner everyone has watched fail twice. Corners that fail twice are cheap — that is their entire charm. Open your own place?",
+   opts:[{t:"This corner. Now.",mods:{}},{t:"Wait for a better site (costs more, scouts better).",mods:{costMult:1.1,odds:.3,wait:2}}],ask:"Name your restaurant:"},
+  win:"Opening night: the room is full of everyone who ever shouted at you, applauding.",
+  lose:"The room is full for six weeks. Restaurants don't die of empty rooms; they die of half-full ones. Not this time — not yet."},
+ {stage1:{ti:"The Twin Problem",sc:"A second site. Xerox or sibling?",
+   opts:[{t:"Same menu, same name — the playbook travels.",mods:{mq0:8,starMod:-.5}},{t:"A different animal entirely.",mods:{mq0:-6,starMod:.4}}]},
+  win:"First service without you: you stand in the old kitchen while the new one opens across town. Somewhere, your name is being cooked by other hands.",
+  lose:"The second room never finds its own heartbeat. You close it before it closes you."},
+ {stage1:{ti:"The Call From London",sc:"A Mayfair hotel group wants your name. Alternatively: a Shoreditch shell and your own money.",
+   opts:[{t:"The hotel deal (cheaper; their people, your name).",mods:{costMult:.7,hireMinus:10}},{t:"Alone (full cost, full control).",mods:{}}]},
+  win:"V., transferred to a London desk two years ago, books under the usual misspelling. The review is the opening's fate — and the review is good.",
+  lose:"London shrugs, which is what London does best. The lease outlives the dream by fourteen months."},
+ {stage1:{ti:"The American Partner",sc:"You cannot do America without American money.",
+   opts:[{t:"Take the partner and the terms.",mods:{}},{t:"Hold out for cleaner terms (harder, prouder).",mods:{odds:-.2,costMult:.95}}]},
+  win:"New York opens. The scale of attention is unlike anything. America does not do medium — and tonight, America approves.",
+  lose:"The build-out ate the budget; the opening ate the rest. America does not do medium."},
+ {stage1:{ti:"The Name as a Thing",sc:"The lawyers present two futures: license the name (money now, control never) or own every kitchen (control always, money crawls).",
+   opts:[{t:"License it.",mods:{costMult:.75,license:1}},{t:"Own every kitchen.",mods:{}}]},
+  stage2:{ti:"Three Openings in One Year",sc:"Tokyo, Dubai, São Paulo — one calendar. You can attend one opening in person. The other two start without you, in every sense.",
+   opts:[{t:"Tokyo.",mods:{mq0:8}},{t:"Dubai.",mods:{mq0:8}},{t:"São Paulo.",mods:{mq0:8}}]},
+  win:"The magazine shoots you in the kitchen of your first restaurant — the corner that failed twice. The whites still fit, roughly. Holding the pan, you realize exactly how long it has been.",
+  lose:"The same photograph runs with a different headline."},
+];
+
+/* ============ ENDINGS ============ */
+const ENDINGS={
+ legacy(g){
+  const r=g.rung, s=stars(g);
+  if(r<=1) return["The Plonge","Forty years of clean plates. Every meal in that room passed through your hands twice. Nobody writes about the plonge. The plonge does not care."];
+  if(r<=6) return["The Brigade","You were the reliable station, the safe pair of hands, the one the young ones asked. There are worse epitaphs than 'taught people'."];
+  if(r<=8) return["The Pass","Head chef. Your menu, your brigade, your Saturdays. The name over the door was never yours — but the food always was."];
+  if(r<=10) return s?["The Starred","The plaque by the door is small. The years it cost are not."]:["The Neighborhood Table","A full room of regulars is a currency the guides don't count. You counted it nightly."];
+  if(r<=12) return["The Name Abroad","Your name is cooked nightly in cities you visit quarterly. Whether it tastes like you is a question you've learned not to ask on Sundays."];
+  return g.flags.TOMAS?["The Name on Three Continents","An empire with a future tense: somewhere in it, right now, someone you trained is training someone. That's the whole recipe."]:
+   ["The Name on Three Continents","The brand outlives the cook. You tell yourself that's the plan, in the plural rooms of the singular name."];
+ },
+ EXIT:["The Exit","The number was real. The beach is real. At 6 a.m. — every 6 a.m. — your hands still wake before you do, reaching for a knife that isn't there."],
+ RUIN_DEBT:["The Receivers","The men who count things arrive on a Tuesday, which at least was always quiet."],
+ RUIN_SCANDAL:["The Cascade","The first review was survivable. It was the fourth kitchen you hadn't visited in a year that finished it. The name did travel, in the end — just ahead of you, and worse."],
+ RUIN_BODY:["The Body","The doctor gets the last line: “I did say I'd only say it once.”"]
+};
+const QUIET=["Service passes. The printer sleeps.","A quiet season. The stocks reduce; so do you.","Nothing breaks. In this trade, that's a headline.","The season turns. Somewhere, a menu changes with it.","Plates out, plates back. The old rhythm holds."];
+
+/* ============ STATE ============ */
+let g=null;
+function newGame(){
+ g={S:12,R:5,N:5,E:80,C:2,rung:0,turn:0,onRung:0,ventures:[],nextExp:0,betWait:0,
+   prot:0,teamLife:0,flags:{},seen:{},mods:{},setbacks:0,scandals:0,
+   alloc:{craft:0,rep:0,cap:0,team:0,rest:0},pendingBet:null,pendingStage2:null,
+   skipNext:false,ended:null,dismissedOppo:-1};
+ save();
+}
+const stars=st=>st.ventures.reduce((a,v)=>a+v.stars,0);
+const budget=()=>CFG.budget+(g.rung>=8?CFG.execBonus:0)+(g.rung>=11?CFG.londonBonus:0);
+function income(){
+ const repf=.5+g.R/100, skf=.6+.4*g.S/100;
+ let inc=CFG.wages[Math.min(g.rung,8)]*repf*skf;
+ for(const v of g.ventures) inc+=CFG.ventureInc*v.market*(v.mq/100)*repf*Math.pow(CFG.starIncMult,v.stars);
+ return inc;
+}
+const seasonTxt=()=>`${g.turn%2?"Autumn":"Spring"}, Year ${Math.floor(g.turn/2)+1}`;
+const money=x=>(x<0?"−":"")+"€"+Math.abs(x).toFixed(0)+"k";
+
+/* ============ SAVE ============ */
+const KEY="service_save_v1";
+function save(){try{localStorage.setItem(KEY,JSON.stringify(g));}catch(e){}}
+function load(){try{const s=localStorage.getItem(KEY);if(s){g=JSON.parse(s);return true;}}catch(e){}return false;}
+
+/* ============ TURN RESOLUTION ============ */
+function applyLevers(){
+ const a=g.alloc, res=[];
+ if(g.skipNext){g.skipNext=false;g.E=100;res.push(["info","A season off. The kitchen survives without you — terrible, and fine. Energy restored."]);return res;}
+ if(a.craft){const gain=a.craft*CFG.craftGain*(1-g.S/CFG.craftCap)*(g.mods.slowCraft>g.turn?.85:1);g.S=Math.min(100,g.S+gain);res.push(["good",`🔪 Craft: skill +${gain.toFixed(1)}`]);}
+ if(a.rep){const gain=a.rep*CFG.repGain*(CFG.repFloor+g.S/100);g.R=Math.min(100,g.R+gain);res.push(["good",`📣 Buzz: reputation +${gain.toFixed(1)}`]);}
+ if(a.cap){const gain=a.cap*(0.25*income()+0.03*g.N);g.C+=gain;res.push(["good",`🪙 Savings: +${money(gain)}`]);}
+ let pts=a.team;
+ const sorted=[...g.ventures].sort((x,y)=>x.mq-y.mq);
+ for(const v of sorted){v.staffed=false;}
+ for(const v of sorted){if(pts<=0)break;v.mq=Math.min(100,v.mq+CFG.mqMaint);v.staffed=true;pts--;res.push(["good",`👨‍🍳 ${v.name}: kitchen sharpened (+${CFG.mqMaint} quality)`]);}
+ if(pts>0){g.N=Math.min(100,g.N+pts*CFG.teamGain);g.prot+=pts*(g.S/100);res.push(["good",`🤝 People: network +${(pts*CFG.teamGain).toFixed(0)}, someone learns from you`]);}
+ g.teamLife+=a.team;
+ if(a.rest){g.E=Math.min(100,g.E+a.rest*CFG.restGain);res.push(["info",`☕ Rest: energy +${a.rest*CFG.restGain}`]);}
+ return res;
+}
+function passive(res){
+ const inc=income();g.C+=inc;res.push(["info",`💶 The tills: +${money(inc)}${g.C<0?" (still in the red: "+money(g.C)+")":""}`]);
+ if(g.C<0)g.C*=1+CFG.debtInt;
+ g.R*=1-(CFG.repDecay+CFG.repDecayRung*g.rung+(g.mods.repDrip?.005:0));
+ if(g.rung>=9)g.S*=CFG.rust;
+ for(const v of g.ventures){
+  let d=CFG.mqDecay*v.dist;
+  if(g.mods.opsLayer&&v.dist>=1.6)d*=.75;
+  if(v.license)d*=1.5;
+  v.mq=Math.max(0,v.mq-d);
+ }
+ if(g.mods.flyer&&g.turn%4===0&&g.ventures.some(v=>v.dist>=1.6)){g.E-=6;for(const v of g.ventures)if(v.dist>=1.6)v.mq=Math.min(100,v.mq+4);res.push(["info","✈️ The quarterly tour: far kitchens tightened, jet lag pocketed."]);}
+ let drain=(CFG.drainBase+CFG.drainRung*g.rung+CFG.drainVent*g.ventures.reduce((a,v)=>a+v.dist,0))*(0.7+Math.random()*0.8);
+ if(g.mods.plonge&&g.rung<=1)drain-=1;
+ if(g.mods.fluNext){drain*=2;delete g.mods.fluNext;res.push(["bad","🤧 Flu season bites. Half the brigade is coughing; you cover the gaps."]);}
+ g.E-=drain;
+ if(g.E<=0){
+  g.setbacks++;g.R=Math.max(0,g.R-CFG.setbackRep);
+  g.C-=inc*(g.mods.setbackWorse?3:CFG.setbackCap);g.E=CFG.eReset;
+  res.push(["bad","🔥 THE BURN. The injury the exhaustion was saving up for. A deep fryer, a hand, a week you don't remember. (Reputation and money take the hit; you're patched up at 40 energy.)"]);
+ }
+}
+function hazards(res){
+ const mqs=g.ventures.map(v=>v.mq), mqf=mqs.length?mqs.reduce((a,b)=>a+b,0)/(100*mqs.length):.5;
+ if(Math.random()<sig(-3+2.5*g.R/100+2*(1-g.E/100)+.25*g.ventures.length)){
+  const dmg=20*(1-.6*(.5*g.N/100+.5*mqf));g.R=Math.max(0,g.R-dmg);
+  res.push(["bad",`🗞️ The press smells blood — a needling piece runs. Reputation −${dmg.toFixed(0)}.`]);}
+ if(Math.random()<sig(-3+2*(g._growth||0)+.8*g.ventures.length-2*(g.alloc.team/budget()))){
+  const hit=income()*.8;g.C-=hit;res.push(["bad",`📦 Supplier credit crunch — cash up front this month. −${money(hit)}.`]);}
+ if(Math.random()<sig(-2+2*g.N/100+1.5*g.R/100)){
+  g.C+=5;g.R=Math.min(100,g.R+6);res.push(["good","✨ A glowing mention, a full Saturday, a friend of a friend with a wine cellar. Small wins add up."]);}
+ for(const v of [...g.ventures]){
+  if(v.mq<CFG.mqScandal&&Math.random()<.35+(g.mods.scandalWorse?.1:0)){
+   g.R=Math.max(0,g.R-35);g.C-=income()*2;g.scandals++;
+   if(v.hit){g.ventures.splice(g.ventures.indexOf(v),1);res.push(["bad",`💥 SCANDAL at ${v.name} — the second one. Forced sale. The awning comes down. (${v.stars?"Stars gone with it. ":""}Reputation and money savaged.)`]);}
+   else{v.hit=true;v.mq=45;if(v.stars>0)v.stars--;res.push(["bad",`💥 SCANDAL at ${v.name}. A rotting kitchen finally makes the papers. Emergency management installed; one more and it's over.${v.stars>=0?" A star is stripped.":""}`]);}
+  }}
+}
+function michelin(queue){
+ if(g.turn%2||!g.ventures.length)return;
+ for(const v of g.ventures){
+  if(v.stars>=3||v.mq<50)continue;
+  const p=sig(CFG.starInt-CFG.starEsc*v.stars+(v.starMod||0)+CFG.starWS*g.S/100+CFG.starWMQ*v.mq/100+CFG.starWR*g.R/100);
+  if(Math.random()<p){v.stars++;g.R=Math.min(100,g.R+CFG.starRep);
+   queue.push({type:"star",v:v.name,n:v.stars});}
+ }
+}
+function promotion(queue){
+ if(g.rung>=8||g.onRung<CFG.promoMin)return;
+ const thr=CFG.promoSkill[g.rung];if(g.S<thr)return;
+ let logit=CFG.promoInt+CFG.promoWS*(g.S-thr)/30+CFG.promoWR*g.R/100+CFG.promoWN*g.N/100;
+ if(g.mods.promoBonus){logit+=1;}
+ if(Math.random()<sig(logit)){delete g.mods.promoBonus;g.rung++;g.onRung=0;queue.push({type:"promo",r:g.rung});}
+}
+
+/* ============ EVENT SELECTION ============ */
+function terms(){
+ const mqs=g.ventures.map(v=>v.mq);
+ return{base:1,lowE:1-g.E/100,highR:g.R/100,fastC:g._growth||0,
+  lowC:g.rung<5?Math.max(0,(20-g.C)/20):0,
+  lowMQ:mqs.length?Math.max(0,(60-Math.min(...mqs))/60):0,
+  highMQ:mqs.length?Math.min(...mqs)/100:0,
+  rust:(g.rung>=9&&g.S<70)?1:0,lowTeam:1-g.alloc.team/budget(),
+  noRest:g.alloc.rest===0?1:0,craft:Math.min(1,g.alloc.craft/3),trigger:0};
+}
+function gateOK(ga){
+ if(!ga)return true;
+ if(ga.S&&g.S<ga.S)return false; if(ga.R&&g.R<ga.R)return false;
+ if(ga.N&&g.N<ga.N)return false; if(ga.E&&g.E<ga.E)return false;
+ if(ga.teamLife&&g.teamLife<ga.teamLife)return false;
+ if(ga.flag&&!g.flags[ga.flag])return false;
+ if(ga.far&&!g.ventures.some(v=>v.dist>=2))return false;
+ if(ga.london&&!g.ventures.some(v=>Math.abs(v.dist-1.6)<.01))return false;
+ return true;
+}
+function drawEvent(){
+ if(g.setbacks>=2&&!g.seen.G2&&gateOK()){const e=EVENTS.find(e=>e.id==="G2");g.seen.G2=1;return e;}
+ const t=terms(),pool=[];
+ for(const e of EVENTS){
+  if(e.ex.trigger)continue;
+  if(g.rung<e.b[0]||g.rung>e.b[1])continue;
+  if(e.once&&g.seen[e.id])continue;
+  if(!gateOK(e.ga))continue;
+  let s=0;for(const k in e.ex)s+=e.ex[k]*(t[k]||0);
+  if(e.once&&!g.seen[e.id])s+=1.5;
+  s-=1.2*Math.log(1+(g.seen[e.id]||0));
+  pool.push([e,Math.exp(s)]);
+ }
+ const quietW=Math.E, total=quietW+pool.reduce((a,p)=>a+p[1],0);
+ let r=Math.random()*total;
+ if(r<quietW)return null;
+ r-=quietW;
+ for(const[e,w]of pool){r-=w;if(r<=0)return e;}
+ return null;
+}
+
+/* ============ EFFECTS ============ */
+function targetVenture(e){
+ if(!g.ventures.length)return null;
+ if(e&&e.ga&&e.ga.london)return g.ventures.find(v=>Math.abs(v.dist-1.6)<.01)||g.ventures[0];
+ if(e&&e.ex.highMQ)return[...g.ventures].sort((a,b)=>b.mq-a.mq)[0];
+ return[...g.ventures].sort((a,b)=>a.mq-b.mq)[0];
+}
+function applyFx(fx,e){
+ if(!fx)return;
+ if(fx.S)g.S=Math.max(0,Math.min(100,g.S+fx.S));
+ if(fx.R)g.R=Math.max(0,Math.min(100,g.R+fx.R));
+ if(fx.N)g.N=Math.max(0,Math.min(100,g.N+fx.N));
+ if(fx.E)g.E=Math.max(1,Math.min(100,g.E+fx.E));
+ if(fx.Ci)g.C+=fx.Ci*Math.max(3,income());
+ if(fx.prot)g.prot+=fx.prot;
+ if(fx.MQ){const v=targetVenture(e);if(v)v.mq=Math.max(0,Math.min(100,v.mq+fx.MQ));}
+ if(fx.flag)g.flags[fx.flag]=1;
+ if(fx.mod)g.mods[fx.mod]=fx.mod==="slowCraft"?g.turn+8:1;
+ if(fx.skipTurn)g.skipNext=true;
+ if(fx.ending==="EXIT")endGame("EXIT");
+}
+function rollP(roll,e){
+ switch(roll.stat){
+  case"half":return .5;
+  case"hidden":return .7;
+  case"S":return sig((g.S-(roll.pivot||55))/14);
+  case"N":return sig((g.N-(roll.pivot||55))/14);
+  case"team":return sig((g.teamLife-40)/15);
+  case"MQ":{const v=targetVenture(e);return v?sig((v.mq-55)/14):.5;}
+ }return .5;
+}
+
+/* ============ EXPANSIONS ============ */
+function oppoAvailable(){
+ if(g.rung<8||g.betWait>0||g.nextExp>=CFG.exps.length||g.ended)return false;
+ if(g.dismissedOppo===g.turn)return false;
+ if(g.pendingBet&&g.pendingBet.readyTurn>g.turn)return false;
+ const ex=CFG.exps[g.nextExp];
+ return g.C+CFG.borrow>=ex.cost*((g.pendingBet&&g.pendingBet.mods.costMult)||1);
+}
+function attemptBet(mods,name){
+ const i=g.nextExp,ex=CFG.exps[i],xp=XP[i];
+ const cost=ex.cost*(mods.costMult||1);
+ const[b0,bS,bR,bN]=ex.bet;
+ const p=sig(b0+(mods.odds||0)+bS*g.S/100+bR*g.R/100+bN*g.N/100);
+ g.C-=cost;g.betWait=CFG.betCool;g.pendingBet=null;
+ if(Math.random()<p){
+  let mq=CFG.mqHireBase+CFG.mqHireNet*g.N+(mods.mq0||0)-(mods.hireMinus||0)-(g.mods.hireMinus?8:0);
+  g.ventures.push({name:name||ex.name,mq:Math.max(15,Math.min(95,mq)),dist:ex.dist,market:ex.market,stars:0,hit:false,starMod:mods.starMod||0,license:!!mods.license,staffed:false});
+  g.nextExp++;g.rung=Math.min(13,8+g.nextExp);
+  printTicket({kind:"OPENING",ti:ex.name.toUpperCase(),sc:xp.win,cls:"special"},[{t:"Service!",say:""}]);
+  logline("gold",`🏆 ${p<.45?"Against the odds — ":""}${ex.name} is yours. (The bet: ${(100*p).toFixed(0)}% and it landed.)`);
+ }else{
+  g.C+=cost*(1-CFG.failFrac);g.R=Math.max(0,g.R-CFG.failRep);
+  printTicket({kind:"THE FALL",ti:ex.name.toUpperCase(),sc:xp.lose,cls:"special"},[{t:"Back to the pass.",say:""}]);
+  logline("bad",`💸 The ${ex.name} bet fails. ${(100*(1-p)).toFixed(0)}% chance it would — the odds were readable, going in. −${money(cost*CFG.failFrac)} and a bruised name.`);
+ }
+}
+
+/* ============ UI ============ */
+const $=id=>document.getElementById(id);
+const LEVERS=[["craft","Craft","i-knife"],["rep","Buzz","i-mega"],["cap","Money","i-coin"],["team","People","i-toque"],["rest","Rest","i-mug"]];
+let overlayQueue=[],awaitingChoice=false;
+
+function render(){
+ $("season").textContent=seasonTxt();
+ $("rungname").textContent=RUNGS[g.rung];
+ const lad=$("ladder");lad.innerHTML=RUNGS.map((_,i)=>`<i class="${i<g.rung?'done':i===g.rung?'now':''}" title="${RUNGS[i]}"></i>`).join("");
+ const stat=(icon,lbl,val,pct,color,extra)=>`<div class="stat ${extra||''}"><svg><use href="#${icon}"/></svg><div class="val ${lbl==='Money'&&g.C<0?'debt':''}">${val}</div><div class="lbl">${lbl}</div><div class="bar"><b style="width:${pct}%;background:${color}"></b></div></div>`;
+ $("stats").innerHTML=
+  stat("i-knife","Skill",g.S.toFixed(0),g.S,"var(--copper)")+
+  stat("i-star","Name",g.R.toFixed(0),g.R,"var(--butter)")+
+  stat("i-coin","Money",money(g.C),Math.max(0,Math.min(100,g.C/10)),"var(--copper)","money")+
+  stat("i-toque","People",g.N.toFixed(0),g.N,"var(--parsley)")+
+  stat("i-flame","Energy",g.E.toFixed(0),g.E,g.E<25?"var(--tomato)":"var(--gas)",g.E<25?"warn":"");
+ $("ventures").innerHTML=g.ventures.map(v=>`
+  <div class="vcard ${v.dist>=1.6?'far':''} ${v.mq<40?'rot':''} ${v.staffed?'staffed':''}">
+   <span class="staffed">staffed ✓</span>
+   <div class="awning"></div>
+   <div class="vstars">${"★".repeat(v.stars)}</div>
+   <div class="vname">${v.name}</div>
+   <div class="vmeta">${v.dist>=3?"worldwide":v.dist>=2.2?"across the ocean":v.dist>=1.6?"abroad":"in town"}${v.license?" · licensed":""}${v.hit?" · on notice":""}</div>
+   <div class="mq"><div class="bar"><b style="width:${v.mq}%"></b></div></div>
+  </div>`).join("");
+ renderLevers();renderOppo();
+ $("runbtn").disabled=awaitingChoice||!!g.ended;
+ $("runbtn").textContent=g.ended?"SERVICE OVER":awaitingChoice?"THE TICKET IS WAITING…":"RUN SERVICE →";
+}
+function renderLevers(){
+ const spent=Object.values(g.alloc).reduce((a,b)=>a+b,0),left=budget()-spent;
+ $("flames").textContent=left>0?"🔥".repeat(left):"—";
+ $("levers").innerHTML=LEVERS.map(([k,name,icon])=>`
+  <div class="lever ${g.alloc[k]?'lit':''}">
+   <svg><use href="#${icon}"/></svg>
+   <div class="lname">${name}</div>
+   <div class="pts">${"●".repeat(g.alloc[k])||"·"}</div>
+   <div class="pm">
+    <button data-l="${k}" data-d="-1" ${g.alloc[k]<=0?'disabled':''} aria-label="less ${name}">−</button>
+    <button data-l="${k}" data-d="1" ${left<=0?'disabled':''} aria-label="more ${name}">+</button>
+   </div></div>`).join("");
+}
+function renderOppo(){
+ const box=$("oppobox");
+ if(!oppoAvailable()){box.innerHTML="";return;}
+ const i=g.nextExp,ex=CFG.exps[i],xp=XP[i],st=xp.stage1;
+ const[b0,bS,bR,bN]=ex.bet;
+ const p=sig(b0+bS*g.S/100+bR*g.R/100+bN*g.N/100);
+ box.innerHTML=`<div class="oppo"><h3>✦ ${st.ti}</h3><p>${st.sc}</p>
+  <div class="odds">cost ~${money(ex.cost)} (you have ${money(g.C)}, can borrow ${money(CFG.borrow)}) · your odds read ≈ ${(100*p).toFixed(0)}%</div>
+  ${st.ask?`<p><input id="vname" class="mono" placeholder="e.g. The Corner" style="width:100%;padding:8px;border-radius:9px;border:1.5px solid var(--paperedge);font-size:14px"></p>`:""}
+  ${st.opts.map((o,j)=>`<button data-x="${j}">${o.t}</button>`).join("")}
+  <button data-x="skip" style="border-color:#cfc6ae;color:#8a8474">Not this season</button></div>`;
+}
+function logline(cls,txt){
+ const d=document.createElement("div");d.className="logline "+cls;d.textContent=txt;
+ $("log").prepend(d);
+ while($("log").children.length>14)$("log").lastChild.remove();
+}
+function printTicket(e,choices,onPick){
+ awaitingChoice=!!onPick;
+ const sc=(e.scAlt&&Object.keys(e.scAlt).find(f=>g.flags[f]))?e.scAlt[Object.keys(e.scAlt).find(f=>g.flags[f])]:e.sc;
+ const tk=document.createElement("div");
+ tk.className="ticket printing "+(e.cls||"");
+ tk.innerHTML=`<div class="tkind"><span>${e.kind||"ORDER IN"}</span><span>#${String(g.turn).padStart(2,"0")} · ${seasonTxt()}</span></div>
+  <div class="ttitle">${e.ti}</div><div class="tscene">${sc}</div>
+  <div class="tchoices">${choices.map((c,i)=>{
+   const ok=gateOK(c.gate);
+   return`<button data-c="${i}" ${ok?"":"disabled"}>${c.t}${!ok?`<span class="why">${lockWhy(c.gate)}</span>`:""}</button>`;}).join("")}</div>
+  <div class="tresult" hidden></div>`;
+ $("tickets").innerHTML="";$("tickets").appendChild(tk);
+ tk.querySelectorAll("button[data-c]").forEach(b=>b.onclick=()=>{
+  const c=choices[+b.dataset.c];
+  tk.querySelectorAll("button").forEach(x=>x.disabled=true);
+  b.style.borderColor="var(--copper)";b.style.color="var(--copper)";
+  let msg=c.say||"";let bad=false;
+  applyFx(c.fx,e);
+  if(c.roll){const p=rollP(c.roll,e);
+   if(Math.random()<p){applyFx(c.roll.win.fx,e);msg=c.roll.win.say;}
+   else{applyFx(c.roll.lose.fx,e);msg=c.roll.lose.say;bad=true;}}
+  const r=tk.querySelector(".tresult");
+  if(msg){r.hidden=false;r.textContent=msg;r.className="tresult"+(bad?" bad":"");}
+  awaitingChoice=false;
+  if(onPick)onPick(c);
+  save();render();
+ });
+}
+function lockWhy(gate){
+ if(!gate)return"";
+ if(gate.N)return`needs contacts (people ${gate.N}+)`;
+ if(gate.teamLife)return"needs years of investing in your people";
+ if(gate.flag==="TOMAS")return"there was a stagiaire, once…";
+ return"not yet";
+}
+
+/* ---- overlays ---- */
+function showOverlay(html,btn,cb){
+ $("ocard").innerHTML=html+`<button id="obtn">${btn}</button>`;
+ $("overlay").classList.add("show");
+ $("obtn").onclick=()=>{$("overlay").classList.remove("show");if(cb)cb();};
+}
+function nextOverlay(){
+ if(!overlayQueue.length)return;
+ const o=overlayQueue.shift();
+ if(o.type==="star")showOverlay(`<div class="big"><span class="starpop">⭐</span></div><h2>A MICHELIN STAR</h2><p style="text-align:center">${o.v} — ${["","its first star. The plaque is small. Tonight is not.","a second star. Different mountain, same rope.","THREE STARS. There is no fourth. There is only keeping them."][o.n]}</p>`,"Back to the pass",nextOverlay);
+ else if(o.type==="promo"){const p=PROMOS[o.r];
+  const sc=(p.scAlt&&Object.keys(p.scAlt).find(f=>g.flags[f]))?p.scAlt[Object.keys(p.scAlt).find(f=>g.flags[f])]:p.sc;
+  showOverlay(`<div class="big">👨‍🍳</div><h2>${p.ti.toUpperCase()}</h2><p>${sc}</p>`,"To work",nextOverlay);}
+}
+
+/* ---- endings ---- */
+function legacyScore(){return 10*g.rung+12*stars(g)+Math.max(0,g.C)/40+5*Math.sqrt(g.prot)+g.R/10;}
+function endGame(kind){
+ if(g.ended)return;g.ended=kind;
+ let ep;
+ if(kind==="EXIT")ep=ENDINGS.EXIT;
+ else if(kind==="RUIN")ep=g.scandals>=3?ENDINGS.RUIN_SCANDAL:g.setbacks>=5?ENDINGS.RUIN_BODY:ENDINGS.RUIN_DEBT;
+ else ep=ENDINGS.legacy(g);
+ const s=stars(g);
+ showOverlay(`<div class="big">${kind==="RUIN"?"🍂":s?"⭐".repeat(Math.min(s,5)):"🍽️"}</div>
+  <h2>${ep[0]}</h2><p>${ep[1]}</p>
+  <p class="mono" style="font-size:12px;background:#f5efdd;padding:10px;border-radius:10px">
+  ${RUNGS[g.rung]} · ${s} star${s===1?"":"s"} · ${money(g.C)} · ${g.ventures.length} kitchen${g.ventures.length===1?"":"s"}<br>
+  ${Math.floor(g.turn/2)} years on the line · ${g.setbacks} burn${g.setbacks===1?"":"s"} · people carried forward: ${g.prot.toFixed(0)}<br>
+  <b>LEGACY ${legacyScore().toFixed(0)}</b></p>`,
+  "New career",()=>{newGame();$("log").innerHTML="";$("tickets").innerHTML="";render();});
+ save();render();
+}
+
+/* ============ THE TURN ============ */
+function runService(){
+ if(awaitingChoice||g.ended)return;
+ g.turn++;g.onRung++;if(g.betWait>0)g.betWait--;
+ const prevC=g.C,res=[];
+ const lev=applyLevers();
+ passive(res);
+ g._growth=Math.max(0,Math.min(1,(g.C-prevC)/Math.max(6,income()*6)));
+ hazards(res);
+ const queue=[];michelin(queue);promotion(queue);
+ for(const l of lev)logline(...l);
+ for(const r of res)logline(...r);
+ if(g.C<CFG.debtLimit){render();endGame("RUIN");return;}
+ if(g.turn>CFG.maxTurns){render();endGame("LEGACY");return;}
+ overlayQueue=queue;nextOverlay();
+ /* pending staged bet ready? */
+ if(g.pendingBet&&g.pendingBet.readyTurn<=g.turn){
+  attemptBet(g.pendingBet.mods,g.pendingBet.name);}
+ else{
+  const e=drawEvent();
+  if(e){g.seen[e.id]=(g.seen[e.id]||0)+1;printTicket(e,e.ch,()=>{});}
+  else{$("tickets").innerHTML="";logline("info","· "+QUIET[Math.floor(Math.random()*QUIET.length)]);}
+ }
+ g.alloc={craft:0,rep:0,cap:0,team:0,rest:0};
+ save();render();
+}
+
+/* ============ WIRING ============ */
+$("levers").addEventListener("click",ev=>{
+ const b=ev.target.closest("button");if(!b)return;
+ const k=b.dataset.l,d=+b.dataset.d;
+ const spent=Object.values(g.alloc).reduce((a,x)=>a+x,0);
+ if(d>0&&spent>=budget())return;
+ g.alloc[k]=Math.max(0,g.alloc[k]+d);renderLevers();
+});
+$("oppobox").addEventListener("click",ev=>{
+ const b=ev.target.closest("button");if(!b)return;
+ const x=b.dataset.x;
+ if(x==="skip"){g.dismissedOppo=g.turn;renderOppo();return;}
+ const i=g.nextExp,xp=XP[i],o=xp.stage1.opts[+x];
+ const nameEl=$("vname"),name=nameEl?(nameEl.value.trim()||null):null;
+ const go=(mods)=>{
+  if(mods.wait){g.pendingBet={mods,name,readyTurn:g.turn+mods.wait};
+   logline("info","🧭 You wait, and scout. The bet ripens.");renderOppo();$("oppobox").innerHTML="";}
+  else if(xp.stage2){
+   printTicket({kind:"THE YEAR OF THREE OPENINGS",ti:xp.stage2.ti,sc:xp.stage2.sc,cls:"special"},
+    xp.stage2.opts.map(o2=>({t:o2.t,say:"The other two openings begin without you — in every sense.",fx:{}})),
+    (c)=>{const j=xp.stage2.opts.findIndex(o2=>o2.t===c.t);
+     attemptBet({...mods,...xp.stage2.opts[j].mods},name);render();});
+  }
+  else attemptBet(mods,name);
+  render();
+ };
+ go({...o.mods});
+});
+$("runbtn").onclick=runService;
+$("b-save").onclick=()=>{save();logline("info","💾 Saved. Close the tab; the kitchen keeps.");};
+$("b-export").onclick=()=>{
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(new Blob([JSON.stringify(g)],{type:"application/json"}));
+ a.download="service-save.json";a.click();};
+$("b-import").onclick=()=>$("filein").click();
+$("filein").onchange=ev=>{
+ const f=ev.target.files[0];if(!f)return;
+ f.text().then(t=>{try{g=JSON.parse(t);save();$("log").innerHTML="";$("tickets").innerHTML="";render();logline("info","⤒ Save loaded. Back to the pass.");}catch(e){logline("bad","That file isn't a save.");}});};
+$("b-new").onclick=()=>{if(confirm("Start a new career? The current one is lost to history."))
+ {newGame();$("log").innerHTML="";$("tickets").innerHTML="";render();}};
+
+/* ============ BOOT ============ */
+if(!load())newGame();
+if(g.ended){newGame();}
+render();
+if(g.turn===0)printTicket({kind:"FIRST SHIFT",ti:"THE PLONGE",sc:"You are eighteen or thereabouts, and the sink is the size of a bathtub. Somewhere above the steam, a kitchen is happening. Spend your points at THE PASS below, then run your first service. (Craft makes you better; Buzz makes you known; Money keeps the lights on; People remember; Rest — take it before it takes you.)"},[{t:"Roll up your sleeves.",say:"The water is exactly too hot. Good. Everything starts here."}]);
+</script>
+</body>
+</html>
