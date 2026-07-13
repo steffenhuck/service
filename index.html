@@ -26,7 +26,7 @@ body{
   background-size:100% 56px, 112px 56px;
   min-height:100vh;
 }
-#app{max-width:520px;margin:0 auto;padding:10px 12px 90px}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 140px}
 h1,h2,h3,.disp{font-family:"Bricolage Grotesque",system-ui,sans-serif}
 .mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
 
@@ -44,6 +44,9 @@ h1 small{display:block;font-size:11px;font-weight:600;color:var(--ink2);letter-s
 .ladder i{flex:1;height:7px;border-radius:3px;background:#e4ddcd;border:1px solid #d7cfba;transition:background .4s}
 .ladder i.done{background:var(--copper);border-color:var(--copper)}
 .ladder i.now{background:var(--gas);border-color:var(--gasdeep);height:12px;animation:pulse 1.6s infinite}
+#nextinfo{font-size:10.5px;color:var(--ink2);margin:-4px 0 8px;font-weight:600}
+#nextinfo b{color:var(--gasdeep)}
+#nextinfo .met{color:var(--parsley)}
 @keyframes pulse{50%{opacity:.55}}
 
 /* ---------- stats ---------- */
@@ -161,8 +164,13 @@ h1 small{display:block;font-size:11px;font-weight:600;color:var(--ink2);letter-s
 
 /* ---------- footer ---------- */
 footer{position:fixed;bottom:0;left:0;right:0;background:rgba(244,241,232,.95);border-top:1.5px solid var(--grout);backdrop-filter:blur(4px)}
-.fin{max-width:520px;margin:0 auto;display:flex;gap:6px;padding:8px 12px}
-.fin button{flex:1;font-size:11.5px;font-weight:700;padding:8px 4px;border-radius:9px;border:1.5px solid var(--paperedge);background:var(--paper);color:var(--ink2);cursor:pointer}
+.fin{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:6px;padding:8px 12px}
+.finrow{display:flex;gap:6px}
+.finrow button{flex:1;font-size:11.5px;font-weight:700;padding:8px 4px;border-radius:9px;border:1.5px solid var(--paperedge);background:var(--paper);color:var(--ink2);cursor:pointer}
+#b-new{width:100%;padding:13px;border:none;border-radius:12px;background:var(--gas);color:#fff;
+ font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:17px;letter-spacing:.5px;
+ cursor:pointer;box-shadow:0 3px 0 var(--gasdeep)}
+#b-new:active{transform:translateY(2px);box-shadow:0 1px 0 var(--gasdeep)}
 .fin button:active{transform:scale(.97)}
 
 .steam{opacity:.7}
@@ -203,6 +211,7 @@ button:focus-visible{outline:3px solid var(--butter);outline-offset:2px}
     </div>
   </header>
   <div class="ladder" id="ladder" title="the climb"></div>
+  <div id="nextinfo"></div>
   <div class="stats" id="stats"></div>
   <div id="ventures"></div>
   <div id="rail"><div class="railbar" title="the ticket printer"></div><div id="tickets"></div></div>
@@ -215,13 +224,13 @@ button:focus-visible{outline:3px solid var(--butter);outline-offset:2px}
   <div id="log"></div>
 </div>
 
-<div id="overlay"><div class="ocard" id="ocard"></div></div>
-
 <footer><div class="fin">
-  <button id="b-save">💾 save</button>
-  <button id="b-export">⤓ export</button>
-  <button id="b-import">⤒ import</button>
-  <button id="b-new">✚ new career</button>
+  <button id="b-new">✚ NEW CAREER</button>
+  <div class="finrow">
+    <button id="b-save">💾 save</button>
+    <button id="b-export">⤓ export</button>
+    <button id="b-import">⤒ import</button>
+  </div>
 </div></footer>
 <input type="file" id="filein" accept=".json" style="display:none">
 <script>
@@ -754,13 +763,20 @@ function attemptBet(mods,name){
 /* ============ UI ============ */
 const $=id=>document.getElementById(id);
 const LEVERS=[["craft","Craft","i-knife"],["rep","Buzz","i-mega"],["cap","Money","i-coin"],["team","People","i-toque"],["rest","Rest","i-mug"]];
-let overlayQueue=[],awaitingChoice=false;
+let awaitingChoice=false,logFresh=false;
 
 function render(){
  $("season").textContent=seasonTxt();
  $("rungname").textContent=RUNGS[g.rung];
  const lad=$("ladder");lad.innerHTML=RUNGS.map((_,i)=>`<i class="${i<g.rung?'done':i===g.rung?'now':''}" title="${RUNGS[i]}"></i>`).join("");
  const stat=(icon,lbl,val,pct,color,extra)=>`<div class="stat ${extra||''}"><svg><use href="#${icon}"/></svg><div class="val ${lbl==='Money'&&g.C<0?'debt':''}">${val}</div><div class="lbl">${lbl}</div><div class="bar"><b style="width:${pct}%;background:${color}"></b></div></div>`;
+ const ni=$("nextinfo");
+ if(g.rung<8){
+  const thr=CFG.promoSkill[g.rung],ok=g.S>=thr&&g.onRung>=CFG.promoMin;
+  ni.innerHTML=`next: <b>${RUNGS[g.rung+1]}</b> · needs skill ${thr} <span class="${g.S>=thr?'met':''}">${g.S>=thr?'✓':'(you: '+g.S.toFixed(0)+')'}</span>${ok?' · <span class="met">in the running — name & contacts speed the call</span>':g.S>=thr?' · settling in first':''}`;
+ }else if(g.nextExp<CFG.exps.length){
+  ni.innerHTML=`the way up now: <b>${CFG.exps[g.nextExp].name}</b> · ~${"€"+CFG.exps[g.nextExp].cost}k when the moment comes`;
+ }else ni.innerHTML=`the top of the ladder. What remains is keeping it.`;
  $("stats").innerHTML=
   stat("i-knife","Skill",g.S.toFixed(0),g.S,"var(--copper)")+
   stat("i-star","Name",g.R.toFixed(0),g.R,"var(--butter)")+
@@ -822,7 +838,7 @@ function printTicket(e,choices,onPick){
    const ok=gateOK(c.gate);
    return`<button data-c="${i}" ${ok?"":"disabled"}>${c.t}${!ok?`<span class="why">${lockWhy(c.gate)}</span>`:""}</button>`;}).join("")}</div>
   <div class="tresult" hidden></div>`;
- $("tickets").innerHTML="";$("tickets").appendChild(tk);
+ $("tickets").appendChild(tk);
  tk.querySelectorAll("button[data-c]").forEach(b=>b.onclick=()=>{
   const c=choices[+b.dataset.c];
   tk.querySelectorAll("button").forEach(x=>x.disabled=true);
@@ -842,6 +858,7 @@ function printTicket(e,choices,onPick){
   const dc=g.C-snap.C;
   if(Math.abs(dc)>=.5)parts.push("money "+(dc>0?"+":"−")+money(Math.abs(dc)).replace("€","€"));
   if(g.prot>snap.prot)parts.push("someone carried forward");
+  if(onPick){$("log").innerHTML="";logFresh=true;}
   if(e.ti&&(parts.length||msg))logline(bad?"bad":"good","🎫 "+e.ti+(parts.length?" — "+parts.join(", "):" — no marks on the scoreboard, only on you"));
   awaitingChoice=false;
   if(onPick)onPick(c);
@@ -856,21 +873,14 @@ function lockWhy(gate){
  return"not yet";
 }
 
-/* ---- overlays ---- */
-function showOverlay(html,btn,cb){
- $("ocard").innerHTML=html+`<button id="obtn" disabled style="opacity:.4">${btn}</button>`;
- $("overlay").classList.add("show");
- const b=$("obtn");
- setTimeout(()=>{b.disabled=false;b.style.opacity="1";},600);
- b.onclick=()=>{$("overlay").classList.remove("show");if(cb)cb();};
-}
-function nextOverlay(){
- if(!overlayQueue.length)return;
- const o=overlayQueue.shift();
- if(o.type==="star")showOverlay(`<div class="big"><span class="starpop">⭐</span></div><h2>A MICHELIN STAR</h2><p style="text-align:center">${o.v} — ${["","its first star. The plaque is small. Tonight is not.","a second star. Different mountain, same rope.","THREE STARS. There is no fourth. There is only keeping them."][o.n]}</p>`,"Back to the pass",nextOverlay);
- else if(o.type==="promo"){const p=PROMOS[o.r];
-  const sc=(p.scAlt&&Object.keys(p.scAlt).find(f=>g.flags[f]))?p.scAlt[Object.keys(p.scAlt).find(f=>g.flags[f])]:p.sc;
-  showOverlay(`<div class="big">👨‍🍳</div><h2>${p.ti.toUpperCase()}</h2><p>${sc}</p>`,"To work",nextOverlay);}
+/* ---- ceremonies: printed as gold tickets ---- */
+function ceremonyTickets(queue){
+ for(const o of queue){
+  if(o.type==="promo"){const p=PROMOS[o.r];
+   printTicket({kind:"PROMOTION",ti:"👨‍🍳 "+p.ti.toUpperCase(),sc:p.sc,scAlt:p.scAlt,cls:"star"},[{t:"To work.",say:""}]);}
+  else if(o.type==="star"){
+   printTicket({kind:"MICHELIN",ti:"⭐ A STAR FOR "+o.v.toUpperCase(),sc:["","Its first star. The plaque is small. Tonight is not.","A second star. Different mountain, same rope.","THREE STARS. There is no fourth. There is only keeping them."][o.n],cls:"star"},[{t:"Back to the pass.",say:""}]);}
+ }
 }
 
 /* ---- endings ---- */
@@ -881,14 +891,10 @@ function endGame(kind){
  if(kind==="EXIT")ep=ENDINGS.EXIT;
  else if(kind==="RUIN")ep=g.scandals>=3?ENDINGS.RUIN_SCANDAL:g.setbacks>=5?ENDINGS.RUIN_BODY:ENDINGS.RUIN_DEBT;
  else ep=ENDINGS.legacy(g);
- const s=stars(g);
- showOverlay(`<div class="big">${kind==="RUIN"?"🍂":s?"⭐".repeat(Math.min(s,5)):"🍽️"}</div>
-  <h2>${ep[0]}</h2><p>${ep[1]}</p>
-  <p class="mono" style="font-size:12px;background:#f5efdd;padding:10px;border-radius:10px">
-  ${RUNGS[g.rung]} · ${s} star${s===1?"":"s"} · ${money(g.C)} · ${g.ventures.length} kitchen${g.ventures.length===1?"":"s"}<br>
-  ${Math.floor(g.turn/2)} years on the line · ${g.setbacks} burn${g.setbacks===1?"":"s"} · people carried forward: ${g.prot.toFixed(0)}<br>
-  <b>LEGACY ${legacyScore().toFixed(0)}</b></p>`,
-  "New career",()=>{newGame();$("log").innerHTML="";$("tickets").innerHTML="";render();});
+ const st=stars(g);
+ const recap=`<br><br><span class="mono" style="font-size:12px;display:block;background:#f5efdd;padding:10px;border-radius:10px">${RUNGS[g.rung]} · ${st} star${st===1?"":"s"} · ${money(g.C)} · ${g.ventures.length} kitchen${g.ventures.length===1?"":"s"}<br>${Math.floor(g.turn/2)} years on the line · ${g.setbacks} burn${g.setbacks===1?"":"s"} · people carried forward: ${g.prot.toFixed(0)}<br><b>LEGACY ${legacyScore().toFixed(0)}</b></span>`;
+ printTicket({kind:"LAST ORDERS",ti:(kind==="RUIN"?"🍂 ":st?"⭐ ":"🍽️ ")+ep[0].toUpperCase(),sc:ep[1]+recap,cls:"star"},
+  [{t:"Start a new career.",say:""}],()=>{newGame();$("log").innerHTML="";$("tickets").innerHTML="";render();firstShift();});
  save();render();
 }
 
@@ -896,7 +902,9 @@ function endGame(kind){
 function runService(){
  if(awaitingChoice||g.ended)return;
  g.turn++;g.onRung++;if(g.betWait>0)g.betWait--;
- $("log").innerHTML="";
+ if(!logFresh)$("log").innerHTML="";
+ logFresh=false;
+ $("tickets").innerHTML="";
  const prevC=g.C,res=[];
  const lev=applyLevers();
  passive(res);
@@ -911,7 +919,7 @@ function runService(){
  }
  if(g.C<CFG.debtLimit){render();endGame("RUIN");return;}
  if(g.turn>CFG.maxTurns){render();endGame("LEGACY");return;}
- overlayQueue=queue;nextOverlay();
+ ceremonyTickets(queue);
  /* pending staged bet ready? */
  if(g.pendingBet&&g.pendingBet.readyTurn<=g.turn){
   attemptBet(g.pendingBet.mods,g.pendingBet.name);}
@@ -963,13 +971,14 @@ $("filein").onchange=ev=>{
  const f=ev.target.files[0];if(!f)return;
  f.text().then(t=>{try{g=JSON.parse(t);save();$("log").innerHTML="";$("tickets").innerHTML="";render();logline("info","⤒ Save loaded. Back to the pass.");}catch(e){logline("bad","That file isn't a save.");}});};
 $("b-new").onclick=()=>{if(confirm("Start a new career? The current one is lost to history."))
- {newGame();$("log").innerHTML="";$("tickets").innerHTML="";render();}};
+ {newGame();$("log").innerHTML="";$("tickets").innerHTML="";render();firstShift();}};
 
 /* ============ BOOT ============ */
+function firstShift(){printTicket({kind:"FIRST SHIFT",ti:"THE PLONGE",sc:"You are eighteen or thereabouts, and the sink is the size of a bathtub. Somewhere above the steam, a kitchen is happening. Spend your points at THE PASS below, then run your first service. (Craft makes you better; Buzz makes you known; Money keeps the lights on; People remember; Rest — take it before it takes you.)"},[{t:"Roll up your sleeves.",say:"The water is exactly too hot. Good. Everything starts here."}]);}
 if(!load())newGame();
 if(g.ended){newGame();}
 render();
-if(g.turn===0)printTicket({kind:"FIRST SHIFT",ti:"THE PLONGE",sc:"You are eighteen or thereabouts, and the sink is the size of a bathtub. Somewhere above the steam, a kitchen is happening. Spend your points at THE PASS below, then run your first service. (Craft makes you better; Buzz makes you known; Money keeps the lights on; People remember; Rest — take it before it takes you.)"},[{t:"Roll up your sleeves.",say:"The water is exactly too hot. Good. Everything starts here."}]);
+if(g.turn===0)firstShift();
 </script>
 </body>
 </html>
