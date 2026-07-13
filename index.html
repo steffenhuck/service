@@ -253,13 +253,13 @@ const U={r1:4,r2:8,r3:14,s1:3,s2:6,e1:8,e2:16,e3:24,n1:4,n2:8,ci1:.8,ci2:1.6,ci3
 /* b: rung band [lo,hi]; ex: exposure weights; ga: gates; once; sc: scene; ch: choices */
 const EVENTS=[
 /* ---- BAND A : the plonge ---- */
-{id:"A1",ti:"The Pan",b:[0,1],ex:{base:1},sc:"A saucepan hits the wall half a meter from your head. Nobody looks up. The sauce it held is already being remade, by a man who is crying slightly.",ch:[
+{id:"A1",ti:"The Pan",b:[0,1],ex:{base:1},alt:["Another saucepan, another wall. You have started grading the throws: this one had good rotation but the sauce survived, which costs style points.","A pan flies. You do not flinch anymore, which worries you more than the pan does."],sc:"A saucepan hits the wall half a meter from your head. Nobody looks up. The sauce it held is already being remade, by a man who is crying slightly.",ch:[
  {t:"Keep your head down. Watch how the remake is done.",fx:{S:U.s1,E:-U.e1},say:"You learn something about butter, and about walls."},
  {t:"Catch the chef's eye and hold it.",roll:{stat:"half",win:{fx:{R:U.r1},say:"A pause. A nod. The kitchen files it away."},lose:{fx:{E:-U.e2},say:"You carry the flour sacks for a month."}}}]},
 {id:"A2",ti:"Staff Meal",b:[0,1],ex:{base:1},ga:{S:15},sc:"The commis who cooks staff meal is off sick. The sous points a ladle at you: “Feed sixteen people. Don't be interesting.”",ch:[
  {t:"Don't be interesting.",fx:{R:U.r1,flag:"NOTICED"},say:"Sixteen clean plates. The sous grunts, which is a medal."},
  {t:"Be interesting.",roll:{stat:"S",pivot:30,win:{fx:{R:U.r2,flag:"NOTICED"},say:"Silence, then seconds. The good silence."},lose:{fx:{R:-U.r1},say:"“The dishwasher made foam,” someone says, forever."}}}]},
-{id:"A3",ti:"The Walk-In at 2 a.m.",b:[0,1],ex:{base:1},sc:"The fish delivery arrives four hours early. You are the only one here. Forty kilos of ice and turbot and nobody to tell you where anything goes.",ch:[
+{id:"A3",ti:"The Walk-In at 2 a.m.",b:[0,1],ex:{base:1},alt:["The fish van is early again. The driver has learned your name; you have learned that turbot waits for no one.","Forty kilos of ice at 2 a.m., third time this year. You and the turbot are practically colleagues now."],sc:"The fish delivery arrives four hours early. You are the only one here. Forty kilos of ice and turbot and nobody to tell you where anything goes.",ch:[
  {t:"Work it out. Put everything away right.",fx:{E:-U.e1,N:U.n1},say:"In the morning the sous checks the walk-in twice, then looks at you differently."},
  {t:"Leave a note.",fx:{R:-U.r1},say:"Notes are for front of house."}]},
 {id:"A4",ti:"Ilya",b:[0,1],ex:{base:1},once:1,sc:"The other dishwasher never hurries and is always finished first. Tonight he says, unasked: “You wash in the wrong order. Come, I show you.”",ch:[
@@ -272,14 +272,23 @@ const EVENTS=[
 {id:"A6",ti:"The Flare",b:[0,1],ex:{lowE:2,base:.3},sc:"Fryer flare — sudden, wrong. The commis nearest it freezes.",ch:[
  {t:"Move. Cloth, lid, done.",fx:{R:U.r2,E:-U.e2},say:"Fast hands get remembered."},
  {t:"Shout and step back.",say:"Safe. Someone else is the story tonight."}]},
-{id:"A7",ti:"Sunday Double",b:[0,1],ex:{base:1},sc:"The other porter simply doesn't appear. The double is yours if you want it, says the sous, in a tone suggesting the question is decorative.",ch:[
+{id:"A7",ti:"Sunday Double",b:[0,1],ex:{base:1},alt:["Another no-show, another double. Your Sundays are becoming a rumor.","The double again. The sous doesn't even phrase it as a question now — just points at the apron."],sc:"The other porter simply doesn't appear. The double is yours if you want it, says the sous, in a tone suggesting the question is decorative.",ch:[
  {t:"Take the double.",fx:{Ci:U.ci2,E:-U.e2},say:"Your feet file a complaint. Your pocket overrules it."},
  {t:"Keep your Sunday.",fx:{E:U.e1},say:"The sous's tone files this away."}]},
-{id:"A8",ti:"The Menu French",b:[0,1],ex:{base:1},sc:"You can't read the menu you wash the evidence of. Neither, it turns out, can Ilya. The apprentice — seventeen, merciless — holds classes at 1 a.m.: nage, brunoise, à la minute.",ch:[
+{id:"A8",ti:"The Menu French",b:[0,1],ex:{base:1},alt:["The 1 a.m. French continues. You now know that everything sounds more expensive in French, including your own tiredness — la fatigue.","You catch yourself correcting a waiter's pronunciation of ballotine. The apprentice beams like a proud parent."],sc:"You can't read the menu you wash the evidence of. Neither, it turns out, can Ilya. The apprentice — seventeen, merciless — holds classes at 1 a.m.: nage, brunoise, à la minute.",ch:[
  {t:"The 1 a.m. lessons.",fx:{S:U.s1,N:U.n1,E:-U.e1},say:"You repeat the words over the sinks like prayers."},
  {t:"Point at the plates like everyone else.",say:"The words stay foreign a while longer."}]},
+{id:"A9",ti:"The Critic's Coat",b:[0,1],ex:{base:.8},sc:"You are sent front-of-house — a first — to fetch the coat of a woman the whole kitchen fears. She tips you and says: “The kitchen is loud tonight. The food isn't. Interesting.” You will think about this sentence for years.",ch:[
+ {t:"“Thank you, madame.”",fx:{N:U.n1},say:"She looks at you one second longer than necessary. Filed."},
+ {t:"Say nothing, remember everything.",fx:{S:U.s1},say:"Loud kitchen, quiet food. There's a whole education in it."}]},
+{id:"A10",ti:"The Locked Ice Machine",b:[0,1],ex:{base:.8},sc:"The owner, convinced of theft, padlocks the ice machine. It is August. The brigade's response is operatic.",ch:[
+ {t:"Learn where the sous hides the bolt cutters.",fx:{N:U.n1},say:"There are two kinds of knowledge in a kitchen. This is the second kind."},
+ {t:"Stay out of the ice war.",fx:{E:U.e1},say:"The padlock lasts nine days. The story lasts forever."}]},
+{id:"A11",ti:"The Staff Party",b:[0,1],ex:{base:.9},sc:"Once a year the owner closes the restaurant and the brigade cooks for the brigade. Tonight the chef makes YOU sit while he — himself, with his hands — brings you a plate. It is the strangest sensation of your life so far.",ch:[
+ {t:"Eat. Say nothing. Remember it.",fx:{E:U.e1,N:U.n1},say:"For one night a year, the machine feeds its parts."},
+ {t:"Sneak into the kitchen to help anyway.",fx:{N:U.n2,E:-U.e1},say:"The chef pretends not to see you at the sink. Everyone pretends not to see him smile."}]},
 /* ---- BAND B : the stations ---- */
-{id:"B1",ti:"Marguerite's Shortcut",b:[2,4],ex:{lowE:2,base:.3},sc:"Marguerite whisks like a metronome and cuts every corner the eye can't see. “The stock cube exists,” she says. “The chef's palate is forty years of cigarettes. Choose sleep.”",ch:[
+{id:"B1",ti:"Marguerite's Shortcut",b:[2,4],ex:{lowE:2,base:.3},setFlag:"MARG",sc:"Marguerite whisks like a metronome and cuts every corner the eye can't see. “The stock cube exists,” she says. “The chef's palate is forty years of cigarettes. Choose sleep.”",ch:[
  {t:"Choose sleep.",fx:{E:U.e1,flag:"SHORTCUT"},say:"You sleep. Something unlearns itself, quietly."},
  {t:"Make the stock.",fx:{E:-U.e1,S:U.s1},say:"Four hours. Bones know things cubes don't."}]},
 {id:"B2",ti:"The Tasting Spoon",b:[2,4],ex:{craft:2},once:1,sc:"The chef tastes your sauce without a word and walks away. Thursday, it's on the menu. Nobody tells you — you find out from the printed card.",ch:[
@@ -287,13 +296,13 @@ const EVENTS=[
 {id:"B3",ti:"The Stage",b:[2,4],ex:{base:1},ga:{E:50},sc:"The starred place across town takes stagiaires on Mondays — your day off. Unpaid. The chef there is a lunatic in the good way.",ch:[
  {t:"Give them your Mondays.",fx:{S:U.s2,E:-U.e2,Ci:-.4},say:"You learn what a kitchen sounds like when nobody has to shout."},
  {t:"Keep your Mondays.",fx:{E:U.e1},say:"A life, briefly."}]},
-{id:"B4",ti:"The Cut",b:[2,4],ex:{lowE:2,base:.2},sc:"Deep, thumb, mid-service — your own fault, the tiredness fault. The board is red where it shouldn't be.",ch:[
+{id:"B4",ti:"The Cut",b:[2,4],ex:{lowE:2,base:.2},alt:["The board is red again — other thumb this time, symmetry of a kind. The tiredness keeps a ledger.","Another cut, shallower. Your hands are learning to fail more carefully."],sc:"Deep, thumb, mid-service — your own fault, the tiredness fault. The board is red where it shouldn't be.",ch:[
  {t:"Tape it, glove it, finish service.",fx:{E:-U.e2,R:U.r1},say:"It holds. Barely. The scar will read like a diploma."},
  {t:"Step off the line.",fx:{R:-U.r1,E:U.e1},say:"The correct choice, which is why it costs."}]},
 {id:"B5",ti:"The Old Man's Sunday",b:[2,4],ex:{base:.8},ga:{N:20},once:1,sc:"Chef Brasse, who has thrown cookware at you for two years, asks — asks — whether you'd help him cook his friend's funeral lunch on Sunday. Unpaid, obviously.",ch:[
  {t:"Sunday, then.",fx:{N:U.n2,flag:"BRASSE_DEBT"},say:"The Old Man remembers everything. Including this."},
  {t:"Decline politely.",say:"The pans resume Monday."}]},
-{id:"B6",ti:"The Competition",b:[2,4],ex:{base:.8},ga:{S:30},sc:"A young chefs' prize: one plate, twenty minutes, judges with pens. Marguerite has already entered.",ch:[
+{id:"B6",ti:"The Competition",b:[2,4],ex:{base:.8},ga:{S:30},setFlag:"MARG",sc:"A young chefs' prize: one plate, twenty minutes, judges with pens. Marguerite has already entered.",ch:[
  {t:"Enter.",fx:{E:-U.e1},roll:{stat:"S",pivot:45,win:{fx:{R:U.r2},say:"Second place. In this room, second place is a name."},lose:{fx:{R:-U.r1},say:"Public is public both ways."}}},
  {t:"Watch Marguerite.",fx:{N:U.n1},say:"She places third and blames the plates. You buy the beer."}]},
 {id:"B7",ti:"The Fish Is Off",b:[2,4],ex:{base:1},sc:"You smell it before you see it. The chef says serve it; the margin says serve it; your nose says what it says.",ch:[
@@ -309,6 +318,15 @@ const EVENTS=[
 {id:"B10",ti:"The Broken Sauce",b:[2,4],ex:{base:1},sc:"Two hundred covers and the beurre blanc splits at 19:55 like a marriage. The chef is at the pass. You have the width of one ticket to decide who finds out.",ch:[
  {t:"Rebuild it in four minutes.",roll:{stat:"S",pivot:42,win:{fx:{S:U.s1,R:U.r1},say:"Nobody ever knows. That's mastery."},lose:{fx:{R:-U.r1,E:-U.e1},say:"Everybody knows."}}},
  {t:"Call the sous.",fx:{N:U.n1,R:-U.r1},say:"Help is remembered two ways."}]},
+{id:"B11",ti:"The Onion Test",b:[2,4],ex:{base:.9},sc:"The new sous lines up the whole brigade and has everyone dice one onion. He inspects the boards in silence, like a customs officer.",ch:[
+ {t:"Dice like your life depends on it.",roll:{stat:"S",pivot:32,win:{fx:{R:U.r1,S:U.s1},say:"He holds up YOUR board to the others. You will dine out on this for a decade."},lose:{fx:{S:U.s1},say:"“Adequate.” In sous, that's a full paragraph."}}},
+ {t:"Dice like it's an onion.",say:"It is, after all, an onion. The sous disagrees with your philosophy."}]},
+{id:"B12",ti:"The Wrong Table",b:[2,4],ex:{base:.9},sc:"Your plate for table twelve lands at table fourteen. Table fourteen, it emerges, contains a food writer, who is now photographing your mistake.",ch:[
+ {t:"Say nothing. Let the mistake have its career.",roll:{stat:"half",win:{fx:{R:U.r2},say:"“An unlisted dish of surprising conviction.” Your error is now the most famous thing you've made."},lose:{say:"The photo is never published. Mistakes usually aren't."}}},
+ {t:"Send the correction to twelve, fast.",fx:{S:U.s1},say:"Order restored. Fame postponed."}]},
+{id:"B13",ti:"The Order Sheet",b:[2,4],ex:{base:.9},sc:"They give you the ordering for the first time. On Thursday a lorry delivers three hundred lemons. You ordered by the piece; the sheet reads by the crate.",ch:[
+ {t:"Confess before anyone counts.",fx:{R:U.r1},roll:{stat:"half",win:{say:"The chef laughs so hard he has to sit down. Lemon week enters legend: lemon tart, lemon fish, lemon everything."},lose:{fx:{Ci:-.4},say:"The chef does not laugh. Lemon week still happens; you are its patron saint, unpaid."}}},
+ {t:"Quietly sell the surplus to the bistro next door.",gate:{N:20},fx:{N:U.n1,Ci:.3},say:"Problem, meet other people's problems. The bistro owes you one."}]},
 /* ---- BAND C : the brigade ---- */
 {id:"C1",ti:"Your First Commis",b:[5,6],ex:{base:1},sc:"There is now a person whose mistakes are your mistakes. He holds the knife like it owes him money.",ch:[
  {t:"Train him properly.",fx:{prot:1,E:-U.e1},say:"Slow now, fast later. That's the whole trade."},
@@ -316,14 +334,14 @@ const EVENTS=[
 {id:"C2",ti:"The Sous Goes Down",b:[5,6],ex:{base:.8},once:1,sc:"Scaffolding, ankle, eight weeks. The chef looks down the line, and the line looks at its shoes.",ch:[
  {t:"“I'll take his stations.”",fx:{E:-U.e2,R:U.r2,mod:"promoBonus"},say:"Eight weeks of two jobs. The schedule notices."},
  {t:"Keep your station and your health.",say:"Someone else takes the chance."}]},
-{id:"C3",ti:"The Lateral Offer",b:[5,6],ex:{highR:2,base:.2},sc:"The bistro on the hill offers more money and a lesser kitchen. Marguerite took theirs last year and her sauces have gotten… rested.",ch:[
+{id:"C3",ti:"The Lateral Offer",b:[5,6],ex:{highR:2,base:.2},setFlag:"MARG",sc:"The bistro on the hill offers more money and a lesser kitchen. Marguerite took theirs last year and her sauces have gotten… rested.",ch:[
  {t:"Go.",fx:{Ci:U.ci2,E:U.e1,mod:"slowCraft"},say:"Comfort has a flavor. It's fine."},
  {t:"Stay.",fx:{R:U.r1},say:"Loyalty is a currency here."}]},
 {id:"C4",ti:"The Notebook",b:[5,6],ex:{craft:2},once:1,sc:"Three years of stolen technique in your own hand. The chef finds it on the shelf and reads for a long time. Then: “Page forty is wrong. Show me you know why.”",ch:[
  {t:"Show him.",roll:{stat:"S",pivot:50,win:{fx:{S:U.s2,R:U.r1},say:"He corrects page forty himself. That's a gift."},lose:{fx:{S:U.s1},say:"He corrects it with less ceremony."}}}]},
 {id:"C5",ti:"V., First Contact",b:[5,6],ex:{highR:2},once:1,sc:"A review of the restaurant. One line concerns you: “the fish course, at least, was cooked by someone paying attention.” You will read this line many times over the next thirty years.",ch:[
  {t:"Cut it out. Keep it.",fx:{R:U.r1,flag:"V_KNOWS"},say:"V. noticed. V. notices everything, eventually."}]},
-{id:"C6",ti:"Marguerite Proposes a Trade",b:[5,6],ex:{base:.8},ga:{N:40},once:1,sc:"Menus travel. She'll show you theirs before it prints if you show her yours. Everyone does it, she says, which is what everyone says.",ch:[
+{id:"C6",ti:"Marguerite Proposes a Trade",b:[5,6],ex:{base:.8},ga:{N:40},setFlag:"MARG",once:1,sc:"Menus travel. She'll show you theirs before it prints if you show her yours. Everyone does it, she says, which is what everyone says.",ch:[
  {t:"Trade.",fx:{N:U.n2},roll:{stat:"hidden",win:{say:"Useful. Quiet. Repeatable."},lose:{fx:{R:-U.r2},say:"It surfaces. The chef uses the word 'loyalty' once, softly."}}},
  {t:"Decline.",fx:{R:U.r1},say:"The chef learns of it eventually. Chefs learn everything eventually."}]},
 {id:"C7",ti:"The Hours",b:[5,6],ex:{lowE:1.5,base:.4},sc:"The brigade counts its hours out loud one night, which is against the unwritten rules. There is talk of talking to the owner.",ch:[
@@ -338,6 +356,15 @@ const EVENTS=[
 {id:"C10",ti:"The New Chef",b:[5,6],ex:{base:.8},once:1,sc:"The Old Man retires to a village and a rumor of vegetables. His replacement is thirty-four, plates with tweezers, and says “concept” without irony. Everything you know is suddenly historical.",ch:[
  {t:"Learn the new school.",fx:{S:U.s1,E:-U.e1},say:"Tweezers, it turns out, are also a technique."},
  {t:"Cook like Brasse taught you.",fx:{R:-U.r1,flag:"SPINE"},say:"Some inheritances don't negotiate."}]},
+{id:"C11",ti:"The Storm Service",b:[5,6],ex:{base:.9},sc:"The power dies at 19:20 with sixty covers booked. The gas still works. Someone finds candles. The dining room decides, collectively, that this is romantic.",ch:[
+ {t:"Cook the whole night on flame and candlelight.",roll:{stat:"S",pivot:48,win:{fx:{R:U.r2,E:-U.e1},say:"The best service of the year, by acclamation. Nobody can quite say why. You can: constraints."},lose:{fx:{E:-U.e2},say:"Romance survives the soup. It does not survive the wait for mains."}}},
+ {t:"Close and comp.",fx:{Ci:-U.ci1},say:"Safe. The refunds sting; the untold story stings differently."}]},
+{id:"C12",ti:"The Wedding Cake",b:[5,6],ex:{base:.8},sc:"The pastry chef vanishes — a love affair, allegedly, with a sommelier from Lyon. The wedding is Saturday. Nobody in the brigade does sugar work. Everyone looks at you, because looking at you is now a thing that happens.",ch:[
+ {t:"Learn cake in three days.",roll:{stat:"S",pivot:50,win:{fx:{R:U.r1,S:U.s1},say:"Three tiers, no casualties. The bride cries at the right kind of tears."},lose:{fx:{R:-U.r1,E:-U.e1},say:"The cake leans. Photographs are taken from the good side. Some are not."}}},
+ {t:"Call every pastry chef you know.",gate:{N:30},fx:{N:U.n1,Ci:-.4},say:"A favor spent is a friendship audited. This one holds."}]},
+{id:"C13",ti:"The Casting",b:[5,6],ex:{highR:1.5,base:.4},sc:"A television producer eats twice, then leaves a card: a cooking show, real money, faces wanted. The chef's opinion of television is printable only in part.",ch:[
+ {t:"Audition, quietly.",roll:{stat:"half",win:{fx:{R:U.r2},say:"You don't get the show. You get something better: the clip. It circulates. Your name starts arriving in rooms before you do."},lose:{fx:{R:-U.r1},say:"The audition tape is found. The chef screens it at family meal, with commentary."}}},
+ {t:"Toss the card.",fx:{R:U.r1},say:"The chef hears — chefs hear everything — and nods once. In this kitchen, that's a press release."}]},
 /* ---- BAND D : the pass ---- */
 {id:"D1",ti:"The Menu Is Yours",b:[7,8],ex:{base:1.2},once:1,sc:"For the first time, nobody above you has an opinion that counts. The printer is waiting.",ch:[
  {t:"Evolution, not revolution.",fx:{R:U.r1},say:"Safe. Solid. The regulars exhale."},
@@ -373,8 +400,11 @@ const EVENTS=[
 {id:"D10",ti:"The Four Hands",b:[7,8],ex:{highR:1.5,base:.3},ga:{R:50},sc:"A charity gala: your food beside a name you grew up reading. He turns out to be shorter than his books and kinder than his reputation.",ch:[
  {t:"Cook it.",fx:{R:U.r2,N:U.n2,E:-U.e1},say:"Two hundred plates, four hands, one story you'll tell forever."},
  {t:"Decline.",fx:{E:U.e1},say:"The invitation does not repeat. They rarely do."}]},
+{id:"D11",ti:"The Double-Booked Saturday",b:[7,8],ex:{base:.9},sc:"The new reservation system, briefly, believed in two Saturdays. Both are fully booked. There is one room, one kitchen, one you.",ch:[
+ {t:"Two seatings, military precision.",roll:{stat:"team",win:{fx:{R:U.r2,Ci:U.ci1},say:"Turn the room like a page. The brigade talks about it for years — the night of two Saturdays."},lose:{fx:{R:-U.r1,E:-U.e2},say:"The seven o'clocks meet the nine o'clocks in the doorway, exchanging looks."}}},
+ {t:"Call forty guests and beg.",fx:{N:U.n1,E:-U.e1},say:"Twenty forgive you, ten reschedule, ten become anecdotes at other people's dinner parties."}]},
 /* ---- BAND E : chef-patron ---- */
-{id:"E1",ti:"The Empty Tuesday",b:[9,10],ex:{base:1.2},sc:"Full Fridays, dead Tuesdays. The rent does not observe the difference.",ch:[
+{id:"E1",ti:"The Empty Tuesday",b:[9,10],ex:{base:1.2},alt:["Tuesday again, empty again. You have begun to take it personally, which the rent does not.","The Tuesday problem persists. Somewhere, a consultant would charge you the answer; the answer is Tuesdays."],sc:"Full Fridays, dead Tuesdays. The rent does not observe the difference.",ch:[
  {t:"Prix-fixe Tuesdays.",roll:{stat:"half",win:{fx:{Ci:U.ci1},say:"Tuesday finds its people."},lose:{fx:{Ci:-U.ci1},say:"Cheap Tuesday cannibalizes full-price Wednesday. Ask any accountant, afterwards."}}},
  {t:"Close Tuesdays.",fx:{E:U.e1,Ci:-.4},say:"The staff love you. The accountant doesn't."},
  {t:"Wine dinners with faces you know.",gate:{N:50},fx:{Ci:U.ci1,N:U.n1},say:"Twenty people who tell forty people."}]},
@@ -405,6 +435,9 @@ const EVENTS=[
  {t:"Lawyers.",fx:{Ci:-U.ci1},say:"Lawyers eat first. Always."},
  {t:"Ignore it.",say:"Flattery at scale is just theft with manners."},
  {t:"Invite their chef to dinner.",fx:{N:U.n1,R:U.r1},say:"The story is irresistible, and now it's your story."}]},
+{id:"E11",ti:"The Harvest Deal",b:[9,10],ex:{base:.9},sc:"A farmer with soil under his nails offers you everything he grows — first pick, handshake price, no contract. His tomatoes taste like an argument for God.",ch:[
+ {t:"Shake the hand.",fx:{Ci:-.5,MQ:U.s2,N:U.n1},say:"The menu now changes when the weather does. This is either a philosophy or a supply problem; some nights both."},
+ {t:"Keep the wholesaler.",say:"Reliable, invoiced, tasteless — the tomatoes, that is. Mostly the tomatoes."}]},
 /* ---- BAND F : the empire ---- */
 {id:"F1",ti:"The Time Zones",b:[11,13],ex:{base:1},ga:{far:1},once:1,sc:"3 a.m. is now a place you visit weekly. New York closes as you wake; someone always needs a decision at the exact hour you're worst at making them.",ch:[
  {t:"Build the ops layer.",fx:{Ci:-U.ci2,mod:"opsLayer"},say:"Systems. Dashboards. Distance, partially refunded."},
@@ -438,17 +471,24 @@ const EVENTS=[
 {id:"F10",ti:"The Airport Question",b:[11,13],ex:{base:.8},sc:"A stranger at gate B44 asks if you're you, and then, kindly, whether the São Paulo one is “real — you know, real real.”",ch:[
  {t:"“I choose every menu myself.” (true-ish)",roll:{stat:"half",win:{fx:{R:U.r1},say:"He beams. True-ish held, this time."},lose:{fx:{R:-U.r1},say:"His nephew works in the São Paulo kitchen. Ah."}}},
  {t:"“It's real if the cooking's real.”",fx:{R:U.r1},say:"It quotes well. You half believe it."}]},
+{id:"F11",ti:"The Imposter",b:[11,13],ex:{highR:1.5,base:.5},sc:"A man is touring provincial towns doing paid cooking demonstrations as you. The photographs show a gentleman with your haircut and, apparently, great confidence in béchamel.",ch:[
+ {t:"Lawyers.",fx:{Ci:-U.ci1},say:"He is stopped. In his last interview as you, he thanks the towns for their warmth. The warmth was real, which is the strange part."},
+ {t:"Ignore him.",say:"He retires undefeated somewhere near the border. To this day, in certain villages, your béchamel is remembered fondly."},
+ {t:"Send him a signed apron.",fx:{R:U.r2},say:"The story runs everywhere. 'CHEF ADOPTS OWN IMPOSTER.' Unbuyable press, purchased with one apron."}]},
 /* ---- BAND G : universal ---- */
+{id:"G8",ti:"The Old Address",b:[5,13],ex:{base:.5},once:1,sc:"You happen down the street of your first kitchen. The restaurant is gone; it is a phone shop now. Through the window, where the pass used to be, a display case of chargers.",ch:[
+ {t:"Go in. Stand where the pass was.",fx:{E:U.e1},say:"A teenager asks if you need help. You do not say: I learned everything here. You say: just looking."},
+ {t:"Walk on.",say:"Kitchens don't haunt buildings. They haunt people."}]},
 {id:"G2",ti:"The Doctor",b:[0,13],ex:{trigger:1},once:1,sc:"“Your bloodwork reads like a man twenty years older. I'll say this once.”",ch:[
  {t:"Take a season fully off.",fx:{skipTurn:1},say:"The kitchen survives without you, which is terrible and fine."},
  {t:"“After the season.”",fx:{mod:"setbackWorse"},say:"There is always a season."}]},
-{id:"G3",ti:"The Dinner You Missed",b:[0,13],ex:{noRest:1.2},sc:"A birthday, a school thing, an anniversary — the empty chair at it was yours.",ch:[
+{id:"G3",ti:"The Dinner You Missed",b:[0,13],ex:{noRest:1.2},alt:["Another chair, another table, another apology sent by text from the walk-in.","You stopped counting the missed ones. Someone else hasn't."],sc:"A birthday, a school thing, an anniversary — the empty chair at it was yours.",ch:[
  {t:"(There is nothing to decide. There was, earlier.)",say:"The game prices everything else. This it only shows."}]},
-{id:"G4",ti:"A Good Day",b:[0,13],ex:{base:.3},sc:"The fish is perfect, the brigade is laughing, service lands like weather. Nothing happens.",ch:[
+{id:"G4",ti:"A Good Day",b:[0,13],ex:{base:.3},alt:["Another good day. They arrive without pattern, like inheritances.","The kind of service where the printer sounds like applause. Nothing happens, perfectly."],sc:"The fish is perfect, the brigade is laughing, service lands like weather. Nothing happens.",ch:[
  {t:"Nothing happens.",say:"It's the day you'll remember when someone asks why you do this."}]},
 {id:"G5",ti:"Flu Season",b:[0,13],ex:{base:.35},sc:"Half the city is coughing. Next turn will run heavy — plan for it.",ch:[
  {t:"Noted.",fx:{mod:"fluNext"},say:"Forewarned is half-rested."}]},
-{id:"G6",ti:"Marguerite, Again",b:[2,13],ex:{base:.5},once:1,sc:"Her career runs beside yours like a train on the adjacent track. Sometimes she writes. You always mean to answer.",ch:[
+{id:"G6",ti:"Marguerite, Again",b:[2,13],ex:{base:.5},once:1,ga:{flag:"MARG"},sc:"Her career runs beside yours like a train on the adjacent track. Sometimes she writes. You always mean to answer.",ch:[
  {t:"Answer her letter.",fx:{N:U.n1},say:"Forty years of parallel lines, one bridge."},
  {t:"Mean to.",say:"The letter stays in the drawer with the good pens."}]},
 {id:"G7",ti:"The Knife",b:[4,13],ex:{base:.4},once:1,sc:"Ilya's knife — his second-best, the note said, though you've since learned it was his best — has been sharpened past its life. The steel is thin as a promise.",ch:[
@@ -520,7 +560,8 @@ function newGame(){
  g={S:12,R:5,N:5,E:80,C:2,rung:0,turn:0,onRung:0,ventures:[],nextExp:0,betWait:0,
    prot:0,teamLife:0,flags:{},seen:{},mods:{},setbacks:0,scandals:0,
    alloc:{craft:0,rep:0,cap:0,team:0,rest:0},pendingBet:null,pendingStage2:null,
-   skipNext:false,ended:null,dismissedOppo:-1};
+   skipNext:false,ended:null,dismissedOppo:-1,jit:{}};
+ for(const e of EVENTS)g.jit[e.id]=(Math.random()*1.2-0.6);
  save();
 }
 const stars=st=>st.ventures.reduce((a,v)=>a+v.stars,0);
@@ -638,9 +679,9 @@ function drawEvent(){
   if(g.rung<e.b[0]||g.rung>e.b[1])continue;
   if(e.once&&g.seen[e.id])continue;
   if(!gateOK(e.ga))continue;
-  let s=0;for(const k in e.ex)s+=e.ex[k]*(t[k]||0);
+  let s=(g.jit&&g.jit[e.id])||0;for(const k in e.ex)s+=e.ex[k]*(t[k]||0);
   if(e.once&&!g.seen[e.id])s+=1.5;
-  s-=1.2*Math.log(1+(g.seen[e.id]||0));
+  s-=1.5*Math.log(1+(g.seen[e.id]||0));
   pool.push([e,Math.exp(s)]);
  }
  const quietW=Math.E, total=quietW+pool.reduce((a,p)=>a+p[1],0);
@@ -766,12 +807,13 @@ function renderOppo(){
 }
 function logline(cls,txt){
  const d=document.createElement("div");d.className="logline "+cls;d.textContent=txt;
- $("log").prepend(d);
- while($("log").children.length>14)$("log").lastChild.remove();
+ $("log").appendChild(d);
 }
 function printTicket(e,choices,onPick){
  awaitingChoice=!!onPick;
- const sc=(e.scAlt&&Object.keys(e.scAlt).find(f=>g.flags[f]))?e.scAlt[Object.keys(e.scAlt).find(f=>g.flags[f])]:e.sc;
+ let sc=(e.scAlt&&Object.keys(e.scAlt).find(f=>g.flags[f]))?e.scAlt[Object.keys(e.scAlt).find(f=>g.flags[f])]:e.sc;
+ const n=(g.seen&&g.seen[e.id])||0;
+ if(e.alt&&n>1)sc=e.alt[Math.min(n-2,e.alt.length-1)];
  const tk=document.createElement("div");
  tk.className="ticket printing "+(e.cls||"");
  tk.innerHTML=`<div class="tkind"><span>${e.kind||"ORDER IN"}</span><span>#${String(g.turn).padStart(2,"0")} · ${seasonTxt()}</span></div>
@@ -786,12 +828,21 @@ function printTicket(e,choices,onPick){
   tk.querySelectorAll("button").forEach(x=>x.disabled=true);
   b.style.borderColor="var(--copper)";b.style.color="var(--copper)";
   let msg=c.say||"";let bad=false;
+  const snap={S:g.S,R:g.R,N:g.N,E:g.E,C:g.C,prot:g.prot};
   applyFx(c.fx,e);
   if(c.roll){const p=rollP(c.roll,e);
    if(Math.random()<p){applyFx(c.roll.win.fx,e);msg=c.roll.win.say;}
    else{applyFx(c.roll.lose.fx,e);msg=c.roll.lose.say;bad=true;}}
   const r=tk.querySelector(".tresult");
   if(msg){r.hidden=false;r.textContent=msg;r.className="tresult"+(bad?" bad":"");}
+  const parts=[];
+  const nm={S:"skill",R:"name",N:"people",E:"energy"};
+  for(const k of["S","R","N","E"]){const d=g[k]-snap[k];
+   if(Math.abs(d)>=1)parts.push(nm[k]+" "+(d>0?"+":"−")+Math.abs(d).toFixed(0));}
+  const dc=g.C-snap.C;
+  if(Math.abs(dc)>=.5)parts.push("money "+(dc>0?"+":"−")+money(Math.abs(dc)).replace("€","€"));
+  if(g.prot>snap.prot)parts.push("someone carried forward");
+  if(e.ti&&(parts.length||msg))logline(bad?"bad":"good","🎫 "+e.ti+(parts.length?" — "+parts.join(", "):" — no marks on the scoreboard, only on you"));
   awaitingChoice=false;
   if(onPick)onPick(c);
   save();render();
@@ -807,9 +858,11 @@ function lockWhy(gate){
 
 /* ---- overlays ---- */
 function showOverlay(html,btn,cb){
- $("ocard").innerHTML=html+`<button id="obtn">${btn}</button>`;
+ $("ocard").innerHTML=html+`<button id="obtn" disabled style="opacity:.4">${btn}</button>`;
  $("overlay").classList.add("show");
- $("obtn").onclick=()=>{$("overlay").classList.remove("show");if(cb)cb();};
+ const b=$("obtn");
+ setTimeout(()=>{b.disabled=false;b.style.opacity="1";},600);
+ b.onclick=()=>{$("overlay").classList.remove("show");if(cb)cb();};
 }
 function nextOverlay(){
  if(!overlayQueue.length)return;
@@ -843,6 +896,7 @@ function endGame(kind){
 function runService(){
  if(awaitingChoice||g.ended)return;
  g.turn++;g.onRung++;if(g.betWait>0)g.betWait--;
+ $("log").innerHTML="";
  const prevC=g.C,res=[];
  const lev=applyLevers();
  passive(res);
@@ -851,6 +905,10 @@ function runService(){
  const queue=[];michelin(queue);promotion(queue);
  for(const l of lev)logline(...l);
  for(const r of res)logline(...r);
+ for(const q of queue){
+  if(q.type==="promo")logline("gold",`👨‍🍳 PROMOTED — you are now ${RUNGS[q.r].toUpperCase()}. (${["","Someone quit; you carry things now.","Ilya's knife is yours.","A station of your own.","The schedule has your name where his was.","The fish is yours — a knighthood.","Tuesdays, you run the pass.","The gamble of an owner's life, on you.","Your name, embroidered."][q.r]||""})`);
+  if(q.type==="star")logline("gold",`⭐ MICHELIN — ${q.v} holds ${q.n} star${q.n>1?"s":""}. The plaque is small. Tonight is not.`);
+ }
  if(g.C<CFG.debtLimit){render();endGame("RUIN");return;}
  if(g.turn>CFG.maxTurns){render();endGame("LEGACY");return;}
  overlayQueue=queue;nextOverlay();
@@ -859,7 +917,7 @@ function runService(){
   attemptBet(g.pendingBet.mods,g.pendingBet.name);}
  else{
   const e=drawEvent();
-  if(e){g.seen[e.id]=(g.seen[e.id]||0)+1;printTicket(e,e.ch,()=>{});}
+  if(e){g.seen[e.id]=(g.seen[e.id]||0)+1;if(e.setFlag)g.flags[e.setFlag]=1;printTicket(e,e.ch,()=>{});}
   else{$("tickets").innerHTML="";logline("info","· "+QUIET[Math.floor(Math.random()*QUIET.length)]);}
  }
  g.alloc={craft:0,rep:0,cap:0,team:0,rest:0};
