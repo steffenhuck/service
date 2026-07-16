@@ -184,9 +184,12 @@ footer{position:fixed;bottom:0;left:0;right:0;background:rgba(244,241,232,.95);b
   *{animation:none!important;transition:none!important}
 }
 button:focus-visible{outline:3px solid var(--butter);outline-offset:2px}
-.sig{display:block;text-align:center;margin:30px 0 4px;font-family:"IBM Plex Mono",monospace;
+.sigblock{margin:30px 0 4px;text-align:center}
+.sig{display:block;font-family:"IBM Plex Mono",monospace;
  font-size:11px;letter-spacing:5px;color:var(--ink2);text-decoration:none;opacity:.75}
 .sig:hover{color:var(--gasdeep);opacity:1}
+.sigwith{display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:5px;
+ color:var(--ink2);opacity:.55}
 </style>
 </head>
 <body>
@@ -225,7 +228,11 @@ button:focus-visible{outline:3px solid var(--butter);outline-offset:2px}
     <button id="runbtn">RUN SERVICE →</button>
   </div>
   <div id="log"></div>
-  <a class="sig" href="https://steffenhuck.github.io" target="_blank" rel="noopener">steffen huck</a>
+  <div class="sigblock">
+    <a class="sig" href="https://steffenhuck.github.io" target="_blank" rel="noopener">steffen huck</a>
+    <span class="sigwith">with</span>
+    <a class="sig" href="https://www.instagram.com/paul.valentin.froehling" target="_blank" rel="noopener">paul fröhling</a>
+  </div>
 </div>
 
 <footer><div class="fin">
@@ -257,6 +264,7 @@ const CFG={maxTurns:80,budget:5,execBonus:1,londonBonus:1,
  repDecay:.03,repDecayRung:.004,rust:.992,
  starInt:-5.5,starEsc:1.2,starWS:3,starWMQ:2,starWR:1,starIncMult:1.4,starRep:12};
 const sig=x=>1/(1+Math.exp(-x));
+const rFloor=()=>Math.min(24,2*g.rung);
 
 /* ============ EFFECT UNITS ============ */
 /* fx: S R N E prot flat units; Ci = multiples of current income; MQ on venture in play; flag; mod */
@@ -392,6 +400,14 @@ const EVENTS=[
 {id:"B21",ti:"Front of House Down",b:[2,6],ex:{base:.8},once:1,sc:"Half the floor staff has the same suspicious flu. The maître d', triaging, looks through the pass at you with the expression of a general promoting a cook to cavalry: you're standing in tonight. Out there. With the guests. Wearing the good apron.",ch:[
  {t:"Serve like you cook: precise, warm, slightly too honest.",roll:{stat:"half",win:{fx:{N:U.n1,R:U.r1},say:"It turns out guests love being served by someone who can actually explain the food. Table nine asks for you specifically at dessert. The maître d' watches with the complicated face of a man discovering a rival and a resource simultaneously."},lose:{fx:{E:-U.e1},say:"You serve a woman from the wrong side, decant with the wrong hand, and refer to a guest's wife as 'chef.' The floor is a country; you are a tourist with a tray. You retreat at ten, humbled and weirdly refreshed."}}},
  {t:"“I cook.”",fx:{N:U.n1,R:-U.r1},say:"The kitchen approves of the doctrine. The office notes the inflexibility. Both are right, which is how most kitchen sentences work."}]},
+{id:"B22",ti:"The Inventory of Empties",b:[2,6],ex:{base:.7},once:1,sc:"The annual stock count is short on hard liquor again — cognac, mostly, and the good rum. The office suspects everyone equally, which is to say uselessly. You, however, know that Milo the barback curates a collection of empty bottles in his locker, arranged by label, like trophies. Or like a cry for help, depending on the light.",ch:[
+ {t:"Report him.",fx:{R:U.r1,N:-U.n2},say:"Milo is gone by Friday, escorted past the lockers he curated. The books balance. The brigade's arithmetic is different: it now includes what you'll do with what you know, and stands one seat further from you at family meal."},
+ {t:"Talk to him. Quietly. The word 'help' included.",roll:{stat:"half",win:{fx:{N:U.n2},say:"He cries, briefly, over the sink — then takes the number you found for him and, eventually, the meetings. Years later a postcard arrives from a sober bar he runs by the sea. The cognac count, meanwhile, quietly heals."},lose:{fx:{N:U.n1},say:"He denies everything with the fluency of practice. The bottles keep walking. But when it finally surfaces on its own, he tells the office one thing unprompted: that you were the only one who'd asked like a person."}}},
+ {t:"Not your locker, not your ledger.",roll:{stat:"hidden",win:{say:"The shrinkage gets written off to 'evaporation,' a word accountants use for exactly this. The bottles and the silence continue their arrangement."},lose:{fx:{R:-U.r1},say:"When it breaks, the inquest reconstructs who must have known. The locker was next to yours. The word 'must' does a lot of quiet damage."}}}]},
+{id:"B23",ti:"Fabienne",b:[2,6],ex:{base:.7},once:1,sc:"Fabienne's plates go out looking like accidents, and have for a year, and nobody says a word — a silence you'd filed under mystery until tonight, when you saw the chef's hand on her shoulder through the office glass, and the mystery filed itself under something older. The chef is married. The kitchen knows things in layers; you have just descended one.",ch:[
+ {t:"Keep your head down. The pass is not a courtroom.",say:"You cook. The slop continues its diplomatic immunity. Some knowledge is just weight — you learn to carry it the way you carry hot pans: without letting it touch anything."},
+ {t:"Hold her plates to the standard at the pass — yours to check, so check them.",fx:{S:U.s1,N:-U.n1,R:U.r1},say:"'Again,' you say, professionally, to plate after plate, quoting only the standard. She glares; the chef watches and can say precisely nothing, since the standard is his. The brigade observes the whole silent opera and files you under 'fair,' which is the expensive drawer."},
+ {t:"One quiet word to Fabienne herself: cook like it's not protected.",roll:{stat:"N",pivot:40,win:{fx:{N:U.n1},say:"She stares, then laughs bitterly — 'you're the first one to say it to me instead of about me.' Her plates improve out of pure spite, which is, in kitchens, a recognized fuel."},lose:{fx:{N:-U.n1},say:"It lands as accusation, travels upstairs as complaint, and comes back down as a schedule where your name has the worst stations for a month. The office glass, you note, works in both directions."}}}]},
 /* ---- BAND C : the brigade ---- */
 {id:"C1",ti:"Your First Commis",b:[5,6],ex:{base:1},sc:"There is now a person whose mistakes are your mistakes. He holds the knife like it owes him money.",ch:[
  {t:"Train him properly.",fx:{prot:1,E:-U.e1},say:"Slow now, fast later. That's the whole trade."},
@@ -458,6 +474,10 @@ const EVENTS=[
 {id:"C21",ti:"The Stock Cube Returns",b:[5,8],ex:{base:.6},ga:{flag:"SHORTCUT"},once:1,sc:"Years since Marguerite's doctrine of the cube, and the habit it planted — the invisible corner, cut when tired — has traveled with you like a stone in a boot. Tonight, of all nights, with the room full of people who matter, a sauce goes out built on the shortcut. And someone at table five is eating very, very slowly.",ch:[
  {t:"Pull the batch. Remake it live, at cost, mid-service.",fx:{E:-U.e2,S:U.s2},say:"Eleven minutes of controlled fury and the real thing goes out. Nobody at table five ever knows. You retire the shortcut that night — not out of virtue. Out of the taste of nearly."},
  {t:"Let it ride. It's always been fine.",roll:{stat:"hidden",win:{say:"It's fine. It is, in fact, always fine — which is exactly how the habit survives another decade, patient as rust."},lose:{fx:{R:-U.r2},say:"Table five sets down the fork and asks the waiter one precise question. The answer appears, gently phrased, in a column two Sundays later. Marguerite texts a single emoji."}}}]},
+{id:"C22",ti:"The Painting",b:[5,8],ex:{base:.7},once:1,setFlag:"PAINTING",sc:"One of the owners has bought art. It arrives swaddled like a patient and unveils as a vast canvas of — the staff debate rages — either a sunset, a liver, or an accident involving both. It hangs where every guest must reckon with it. The owner stands before it, moved, awaiting opinions.",ch:[
+ {t:"“Fine dining and bad art — the classic pairing, sir. We're in the tradition now.”",roll:{stat:"half",win:{fx:{R:U.r1,N:U.n1},say:"A silence, then the owner laughs so hard he has to hold the frame. 'The tradition!' he repeats all evening, to guests, proudly. The painting stays; so does the story; you are now the cook who says true things survivably."},lose:{fx:{R:-U.r1},say:"The owner's face does the thing faces do when money is questioned. 'It's a HOFMANN,' he says, which it is not. Your next three requisitions are scrutinized in ways the painting never will be."}}},
+ {t:"Hang the station's polished copper opposite it. Say nothing.",fx:{N:U.n1},say:"The pans gleam across the room at the canvas in eloquent silence, a duel of surfaces. The brigade understands instantly and forever. Two regulars ask if the copper is for sale."},
+ {t:"“It's wonderful.”",say:"The painting stares back, victorious. You will look at it, and it at you, for years. In certain lights the liver appears to be winning."}]},
 /* ---- BAND D : the pass ---- */
 {id:"D1",ti:"The Menu Is Yours",b:[7,8],ex:{base:1.2},once:1,sc:"For the first time, nobody above you has an opinion that counts. The printer is waiting.",ch:[
  {t:"Evolution, not revolution.",fx:{R:U.r1},say:"Safe. Solid. The regulars exhale."},
@@ -516,6 +536,10 @@ const EVENTS=[
  {t:"Pin it to the pass.",fx:{S:U.s1,N:U.n1},say:"The brigade debates it for a month like scripture. The two dishes it was right about get rebuilt; the one it was wrong about becomes a point of doctrinal pride. You never learn who wrote it. Every good kitchen has a ghost; yours has excellent handwriting."},
  {t:"Fix the two dishes quietly, tell no one.",fx:{S:U.s2},say:"The corrections go in on a Tuesday, unannounced. Weeks later, a comment card in the same handwriting: one word. 'Better.'"},
  {t:"Bin it.",say:"It goes in the bin and comes back out of it at 3 a.m., occasionally, for years, entirely from memory."}]},
+{id:"D17",ti:"Blackened Goat",b:[7,10],ex:{craft:1.2,base:.5},once:1,sc:"You never had a thing for blackened cod — everyone's blackened cod, the dish of a decade you sat out. But the thought arrives one night fully formed, absurd and grinning: blackened goat. It should not work. Neither, once, did herring and liver.",ch:[
+ {t:"On the menu. This week.",roll:{stat:"S",pivot:62,win:{fx:{R:U.r2,S:U.s1},say:"The goat detonates. Word of mouth, then word of internet, then a queue. A food magazine calls it 'the dish blackened cod always wanted to be.' You frame nothing; the goat needs no frame."},lose:{fx:{R:-U.r1},say:"The room orders it once, out of curiosity, the way one pets an unusual dog. It slinks off the menu within the month. Some ideas arrive fully formed and wrong."}}},
+ {t:"Staff meal first. The brigade decides.",fx:{S:U.s1},say:"Sixteen forks, one verdict: 'more of the crust, less apology in the seasoning.' The goat enters development like a proper athlete. It will be ready when it's ready."},
+ {t:"Keep dreaming.",say:"The goat joins the notebook, between the impossible soufflé and the soup you've never dared. The notebook is patient. The notebook is always patient."}]},
 /* ---- BAND E : chef-patron ---- */
 {id:"E1",ti:"The Empty Tuesday",b:[9,10],ex:{base:1.2},alt:["Tuesday again, empty again. You have begun to take it personally, which the rent does not.","The Tuesday problem persists. Somewhere, a consultant would charge you the answer; the answer is Tuesdays."],sc:"Full Fridays, dead Tuesdays. The rent does not observe the difference.",ch:[
  {t:"Prix-fixe Tuesdays.",roll:{stat:"half",win:{fx:{Ci:U.ci1},say:"Tuesday finds its people."},lose:{fx:{Ci:-U.ci1},say:"Cheap Tuesday cannibalizes full-price Wednesday. Ask any accountant, afterwards."}}},
@@ -610,6 +634,19 @@ const EVENTS=[
  {t:"Buy him out — whatever it costs.",fx:{Ci:-U.ci3,flag:"INDEPENDENT",R:U.r1},say:"The number makes your accountant leave the room to laugh privately. But the name over the door goes back to owning itself, and the trade papers write the sentence you paid for: 'sole proprietor, again.'"},
  {t:"Negotiate: he keeps the money, loses the adjectives.",roll:{stat:"N",pivot:65,win:{fx:{N:U.n1},say:"Two dinners, one lawyer each, a truce drafted on the second tablecloth: his capital, your kitchen, a wall between them with a door only you hold the key to. The Dane respects a good contract the way chefs respect a good knife."},lose:{fx:{R:-U.r1},say:"The negotiation leaks. 'CHEF AT WAR WITH BACKER' is not a headline that seats tables. You settle for a concept 'consultation' that consumes a season of Tuesdays."}}},
  {t:"Take the list. Open his restaurant.",fx:{Ci:U.ci2,R:-U.r1},say:"It's handsome, profitable, and precisely nothing to do with you — a room wearing your name like a rented suit. It makes money the way strangers make small talk. You visit twice a year, as agreed, in writing."}]},
+{id:"E27",ti:"The Number",b:[9,13],ex:{base:.7},once:1,sc:"Months ago, in a warm moment after a great evening, you exchanged private numbers with a regular. He used to be charming. The phone now testifies otherwise: dinner invitations, menu suggestions, a photo of HIS risotto, a 2 a.m. voice note about truffle sourcing, a wounded 'seen my messages?' The charm, you realize, was a reservation system.",ch:[
+ {t:"One clear, kind boundary — in writing.",roll:{stat:"half",win:{fx:{N:U.n1},say:"'I treasure you as a guest; my phone belongs to the kitchen.' A day of silence, then: 'Understood. Table for two, Friday?' The best regulars survive their own corrections."},lose:{fx:{R:-U.r1},say:"He takes it as exile. The reviews arrive within the week under three different names, all mentioning 'arrogance' and, obscurely, risotto."}}},
+ {t:"Route him to the maître d'. Change nothing else.",say:"The maître d' absorbs him with professional grace, as maître d's have absorbed lonely men since the invention of the dining room. Your phone quiets. The bookings continue. Nobody is told anything, which is the whole craft."},
+ {t:"One honest dinner. He's lonely — you've seen it for months.",fx:{N:U.n1,E:-U.e1},say:"Two hours, one bottle, the truth arriving around dessert: a divorce, an empty flat, a restaurant as the last warm room in a life. The pestering stops — not because of a boundary, but because he was only ever knocking. Most pests are loneliness with a reservation."}]},
+{id:"E28",ti:"Nuts for Nuts",b:[9,13],ex:{highR:1.5,base:.4},once:1,sc:"A commercial offer, national airtime, a fee with genuine architecture to it. The catch is the script, which consists in its entirety of you, in whites, to camera, saying: “I'm nuts… for nuts.” There is a storyboard. In the storyboard, you wink.",ch:[
+ {t:"Say the line. Take the money.",fx:{Ci:U.ci2},roll:{stat:"half",win:{fx:{R:U.r1},say:"Delivered with the deadness of a man reading a verdict, it becomes ironically beloved — a meme, a t-shirt, a thing shouted warmly at you in airports. The fee builds a pastry section. Dignity, it turns out, has a resale market."},lose:{fx:{R:-U.r2},say:"The wink tests well; the edit keeps the wink. The guides do not wink back. For one full year, no interview omits the nuts."}}},
+ {t:"Counter: one take, no wink, you write the line.",roll:{stat:"N",pivot:60,win:{fx:{Ci:U.ci1,R:U.r1},say:"Your version — you, cracking a walnut in silence, then one raised eyebrow — runs everywhere. The agency claims credit; the fee clears; the eyebrow gets fan mail."},lose:{say:"The agency 'goes another direction,' which turns out to be a soap actor who winks twice. You watch it once, in a hotel, and sleep the sleep of the spared."}}},
+ {t:"Decline.",fx:{R:U.r1},say:"The refusal costs a fee and buys a sentence — 'not for sale' — that circulates in the exact rooms where it compounds."}]},
+{id:"E29",ti:"The Little Place in Berlin",b:[9,13],ex:{base:.8},once:1,sc:"Kreuzberg, eleven tables, a menu photocopied slightly crooked — and a chef, alone at the stove, who is unmistakably, upsettingly a genius. You eat the six courses twice. Nobody knows this place. You now hold that fact like a lit match.",ch:[
+ {t:"Buy the place. Change nothing but the rent's certainty.",fx:{Ci:-U.ci2},roll:{stat:"half",win:{fx:{prot:2,R:U.r1},say:"You buy the building's patience and stay out of the kitchen. He cooks for a decade, unbothered, occasionally sending you a new dish by photo like a proud nephew. The smartest money you ever spent is the money that changed nothing."},lose:{say:"Ownership, however gentle, is weather. He cooks correctly now, and correct was never what it was. You sell it back to him for one euro and an education."}}},
+ {t:"Hire him away.",roll:{stat:"half",win:{fx:{N:U.n1,R:U.r1},say:"In your kitchen, with real equipment and someone else's paperwork, he grows a foot taller. The trade calls it your best signing. You know it was his — you just held the pen."},lose:{fx:{Ci:-U.ci1},say:"The magic, it emerges, was the room: the crooked menu, the eleven tables, the aloneness. In your kitchen he's merely excellent. You release him home with a raise he didn't ask for, and eat there quietly the following spring."}}},
+ {t:"Tell everyone it's terrible. Keep it yours.",roll:{stat:"hidden",win:{say:"'Overrated,' you say, twice, at the right dinners. The eleven tables stay bookable. You dine there monthly, alone, in the warm glow of a lie of preservation — which is still, the glow admits, a lie."},lose:{fx:{R:-U.r2},say:"A food writer clocks you there for the third time, notebook already out. The story writes itself: the great chef who bad-mouthed the little place he couldn't stay away from. Berlin, of all cities, does not forgive snobbery's hypocrisy."}}},
+ {t:"Tell everyone the truth.",fx:{R:U.r1,N:U.n1},say:"One post, no caveats: the best meal of my year, eleven tables, go. He's booked out by Thursday, forever. You've lost a secret and made a colleague — the trade's oldest, fairest exchange rate."}]},
 /* ---- BAND F : the empire ---- */
 {id:"F1",ti:"The Time Zones",b:[11,13],ex:{base:1},ga:{far:1},once:1,sc:"3 a.m. is now a place you visit weekly. New York closes as you wake; someone always needs a decision at the exact hour you're worst at making them.",ch:[
  {t:"Build the ops layer.",fx:{Ci:-U.ci2,mod:"opsLayer"},say:"Systems. Dashboards. Distance, partially refunded."},
@@ -670,6 +707,18 @@ const EVENTS=[
 {id:"F17",ti:"The Dream Within the Dream",b:[11,13],ex:{rust:1.5,base:.5},once:1,sc:"You dream you wake — and in the dream you wake in your flagship, mid-afternoon light, every table set, every glass polished, and no one there. Not empty like Monday. Empty like after. You walk the whole room hearing only your own shoes. Then you wake in fact, in a hotel, in a city you have to think for a moment to name.",ch:[
  {t:"Take it as a sign. Fly home. Work the flagship for a week.",fx:{S:U.s1,E:-U.e1,R:U.r1},say:"The room, in waking life, is loud and warm and needs you for nothing — which turns out to be the cure. You cook all week anyway. The dream doesn't come back. Some signs just want acknowledging in person."},
  {t:"Jet lag. It was jet lag.",fx:{E:U.e1},say:"You sleep it off and name the city without hesitation by Thursday. The dream files itself away — though once a year or so, in a quiet dining room at the wrong hour, you hear your own shoes."}]},
+{id:"F18",ti:"The Gift",b:[11,13],ex:{base:.7},ga:{far:1},once:1,sc:"A famous artist — genuinely famous, museum-famous — has gifted you a vast painting for the Brooklyn dining room. It arrives with couriers and gravity. It is abhorrent. Not challenging: abhorrent. It appears to depict, the staff consensus holds, 'a meeting of teeth.'",scAlt:{PAINTING:"A famous artist has gifted you a vast painting for the Brooklyn dining room. It is abhorrent — a meeting of teeth, says the staff consensus. And you have been here before, years ago, on the other side of the apron, watching an owner unveil his liver-sunset. The tradition, as you once told him, is fine dining and bad art. The tradition has found you."},ch:[
+ {t:"Hang it. Prominently. Say nothing.",fx:{R:U.r1},say:"The art world declares the room 'in dialogue with discomfort.' Guests photograph the teeth more than the food. Abhorrent, it turns out, is a genre, and you are now one of its venues."},
+ {t:"The private dining room. 'A more intimate setting for the work.'",fx:{N:U.n1},say:"Diplomacy, framed. The artist approves — 'it needs to be ALONE with people' — and the main room keeps its calm. Twice a year someone books the private room specifically to eat beneath the teeth, and these bookings are, without exception, interesting."},
+ {t:"Tell him the truth over dinner.",roll:{stat:"half",win:{fx:{N:U.n2,R:U.r1},say:"He listens, delighted — 'FINALLY' — and repaints you something quieter, keeping the teeth for a collector he dislikes. The friendship survives on the only diet friendships keep: honesty, served warm."},lose:{fx:{N:-U.n1},say:"Artists, like chefs, contain multitudes, and one of his multitudes never forgives. The teeth go to a rival's dining room with a pointed dedication. Critics take sides. The food, in all coverage, is a footnote."}}}]},
+{id:"F19",ti:"The Ruler of Zangaristan",b:[11,13],ex:{base:.7},once:1,sc:"An emissary in a suit that costs more than your first restaurant conveys an invitation: the ruler of Zangaristan requests you — personally — for his birthday dinner. The fee has telephone-number properties. The ruler has properties too; several organizations publish annual reports about them.",ch:[
+ {t:"Decline. Publicly, once, without adjectives.",fx:{R:U.r2},say:"'I cook for anyone who walks into my restaurants. I don't fly to palaces.' The sentence travels further than the plane would have. A fee refused is a story that pays out for years, in the only currency that appreciates."},
+ {t:"Accept.",fx:{Ci:U.ci3},roll:{stat:"hidden",win:{say:"The dinner is exquisite, the discretion absolute, the wire transfer punctual. Nothing appears anywhere. Only your own memory keeps the guest list, and it holds committee hearings at 3 a.m., irregularly, for years."},lose:{fx:{R:-U.r3},say:"A palace photographer's shot escapes: you, mid-flambé, the ruler applauding. It runs everywhere beside the annual reports. 'Chef to the Regime' is a title no menu ever quite covers again."}}},
+ {t:"Accept — and announce the entire fee goes to the regime's documented victims.",roll:{stat:"half",win:{fx:{R:U.r1,Ci:.2},say:"A tightrope, walked in whites. The dinner happens, the donation lands, the coverage calls it 'the most expensive meal a dictator ever bought his own opposition.' You age a year in an evening."},lose:{fx:{R:-U.r2},say:"Both sides read it as serving the other. The palace feels mocked, the exiles feel used, and the commentary agrees on one word from two directions: 'laundering.' Some tightropes are just two cliffs."}}}]},
+{id:"F20",ti:"The Regulars You Didn't Choose",b:[10,13],ex:{base:.7},once:1,sc:"Your smallest restaurant — the bistro, the sentimental one — has become, the maître d' reports with a diplomat's flat voice, a favorite of the leadership of the far right. Every Thursday, the corner table, the same toasts getting louder. Other regulars have begun, quietly, not returning. Your name is on the door they walk under.",ch:[
+ {t:"Make it quietly, relentlessly inhospitable.",roll:{stat:"half",win:{fx:{N:U.n2},say:"The corner table migrates to the kitchen door; the playlist develops convictions; Thursdays are mysteriously committed to a supper club that doesn't exist. Within two months they've found somewhere 'with better service.' The staff never says a word. The staff never had to."},lose:{fx:{R:-U.r1,N:U.n1},say:"A memo about the playlist leaks and becomes a news cycle: petty tyranny or quiet resistance, pick your paper. Legal sends a careful letter. The staff, notably, brings you coffee unasked for a week."}}},
+ {t:"Say it plainly: they are not welcome under your name.",roll:{stat:"half",win:{fx:{R:U.r2,N:U.n1},say:"The statement is four sentences and contains no adjectives. Bookings dip for a month, then return with different faces — more of them. Your kitchens, you discover, had been waiting years to be proud of you out loud."},lose:{fx:{R:-U.r1,E:-U.e1},say:"The boycott is organized, loud, and includes a weekly protest of eleven men and a flag. It exhausts a season. It also, eventually, exhausts itself — convictions with reservations rarely outlast winter. You'd say it again, which is the part that matters."}}},
+ {t:"A booking is a booking.",roll:{stat:"hidden",win:{say:"The money is the same color as everyone's. The corner table toasts on. The other regulars finish drifting; the room's old warmth goes with them, one Thursday at a time, and the books balance perfectly over the sound."},lose:{fx:{R:-U.r2},say:"The photograph was inevitable: the leader, glass raised, your name in soft focus above him like a blessing. Silence, it turns out, was never neutral — it was inventory, waiting to be sold as endorsement."}}}]},
 /* ---- BAND G : universal ---- */
 {id:"G8",ti:"The Old Address",b:[5,13],ex:{base:.5},once:1,sc:"You happen down the street of your first kitchen. The restaurant is gone; it is a phone shop now. Through the window, where the pass used to be, a display case of chargers.",ch:[
  {t:"Go in. Stand where the pass was.",fx:{E:U.e1},say:"A teenager asks if you need help. You do not say: I learned everything here. You say: just looking."},
@@ -694,6 +743,13 @@ const EVENTS=[
 {id:"G14",ti:"The Anniversary",b:[2,13],ex:{noRest:1.5,base:.3},ga:{flag:"HOME"},once:1,sc:"An anniversary — the real kind, the one with a date only two people know. It falls, of course, on the loudest Saturday of the season. The empty chair of years past clears its throat. This time, the choice has a name in it.",ch:[
  {t:"Hand the pass over. Go home. Cook for two.",fx:{E:U.e1,N:U.n1},say:"Two covers, one small kitchen, the hardest table you'll ever cook: someone who knows all your tells and orders honesty. The Saturday survives without you — they always could, you just never let them prove it."},
  {t:"The season argues, and wins.",fx:{R:U.r1},say:"Service is flawless. You bring home the good leftovers and a speech that dies in the doorway at the sight of two plates, one used, washed and drying. Nothing is said. Everything is filed."}]},
+{id:"G15",ti:"The Old Signature",b:[7,13],ex:{base:.6},once:1,sc:"The Hartmanns, twenty years of anniversaries, always the same ritual: the old signature dish, off the menu for a decade, procured specially when their booking appears. Tonight they're at their table, glowing with tradition — and the procurement, you learn at 18:52, never happened. No note, no order, no lobster. The dish exists only in three memories, two of them currently ordering champagne.",ch:[
+ {t:"Rebuild it from what the kitchen holds, in forty minutes, from memory.",roll:{stat:"S",pivot:60,win:{fx:{R:U.r1,S:U.s1},say:"Langoustine standing in for lobster, the sauce reverse-engineered from your own hands' memory. They never know. Or — Frau Hartmann's small smile at the last bite suggests — they know, and count it the finest vintage of the ritual yet."},lose:{fx:{R:-U.r1},say:"Twenty years calibrates a palate like nothing else. Herr Hartmann sets down his fork with terrible gentleness: 'It's lovely. It isn't ours.' You comp the evening. Some debts can't be plated."}}},
+ {t:"Go to the table. Confess. Offer to invent next year's tradition tonight.",roll:{stat:"half",win:{fx:{N:U.n2,R:U.r1},say:"'Then surprise us,' says Frau Hartmann, delighted, 'we've been eating the same thing for twenty years out of politeness.' The new dish becomes the new ritual. Traditions, it turns out, also want retiring by someone brave."},lose:{fx:{N:-U.n1},say:"Tradition, for some, is the entire meal. They're gracious about it the way people are gracious about small deaths. The booking next year goes elsewhere; you feel it like a missing tooth every anniversary since."}}}]},
+{id:"G16",ti:"The Question at Table Twelve",b:[7,13],ex:{base:.6},once:1,sc:"He dines twice a month: once with his wife, once with a woman who varies. Tonight is the wife. He excuses himself; and in the gap he leaves, she turns to you with a calm that has clearly been rehearsed for weeks: 'Tell me — did my husband dine here last week? On his own?' The room continues around you at full volume and total silence.",ch:[
+ {t:"“Madame, I only ever remember what people ate.”",fx:{R:U.r1,N:U.n1},say:"She holds your eyes for three seconds, then nods slowly — the answer received in full, the discretion noted separately. When he returns, she orders dessert for both of them, deciding something private over the soufflé. Hospitality's oldest sentence still holds all the weight it was built for."},
+ {t:"The truth.",roll:{stat:"half",win:{fx:{N:U.n1},say:"She already knew — questions like hers always already know; they only need a witness. Years later, remarried and radiant, she books the same table and tells you: 'You were the only one who didn't treat me like the last to know.'"},lose:{fx:{R:-U.r1},say:"The scene happens now, at volume, between the amuse-bouche and the arrival of a man discovering his life mid-stride. Truth was hers to have; the timing, the room quietly feels, was yours to have protected. Table twelve stays hard to seat for a season."}}},
+ {t:"“We were terribly full last week — I'd have to check the book.”",say:"The practiced fog, deployed. She lets it settle, unconvinced and unaccusing. The marriage, the room, the soufflé — all proceed. Fog is not kindness, exactly, but it is sometimes the only weatherproof thing to sell."}]},
 {id:"G2",ti:"The Doctor",b:[0,13],ex:{trigger:1},once:1,sc:"“Your bloodwork reads like a man twenty years older. I'll say this once.”",ch:[
  {t:"Take a season fully off.",fx:{skipTurn:1},say:"The kitchen survives without you, which is terrible and fine."},
  {t:"“After the season.”",fx:{mod:"setbackWorse"},say:"There is always a season."}]},
@@ -775,7 +831,7 @@ function newGame(){
  g={S:12,R:5,N:5,E:80,C:2,rung:0,turn:0,onRung:0,ventures:[],nextExp:0,betWait:0,
    prot:0,teamLife:0,flags:{},seen:{},mods:{},setbacks:0,scandals:0,
    alloc:{craft:0,rep:0,cap:0,team:0,rest:0},pendingBet:null,pendingStage2:null,
-   skipNext:false,ended:null,dismissedOppo:-1,jit:{}};
+   skipNext:false,ended:null,dismissedOppo:-1,jit:{},worldStage:0,worldMods:null};
  for(const e of EVENTS)g.jit[e.id]=(Math.random()*1.2-0.6);
  save();
 }
@@ -820,7 +876,7 @@ function passive(res){
  const inc=income();g.C+=inc;res.push(["info",`💶 The tills: +${money(inc)}${g.C<0?" (still in the red: "+money(g.C)+")":""}`]);
  if(g.C<0)g.C*=1+CFG.debtInt;
  const rLoss=g.R*(CFG.repDecay+CFG.repDecayRung*g.rung+(g.mods.repDrip?.005:0));
- g.R-=rLoss;
+ g.R=Math.max(rFloor(),g.R-rLoss);
  if(rLoss>=2)res.push(["info",`📉 The name fades a little (−${rLoss.toFixed(0)}) — fame is a treadmill up here.`]);
  if(g.rung>=9){const sLoss=g.S*(1-CFG.rust);g.S-=sLoss;
   if(sLoss>=.4)res.push(["info",`🧂 The hands dull a touch (−${sLoss.toFixed(1)}) — you don't cook enough anymore.`]);}
@@ -837,7 +893,7 @@ function passive(res){
  g.E-=drain;
  res.push(["info",`🕯️ The season takes its toll: energy −${drain.toFixed(0)}.`]);
  if(g.E<=0){
-  g.setbacks++;g.R=Math.max(0,g.R-CFG.setbackRep);
+  g.setbacks++;g.R=Math.max(rFloor(),g.R-CFG.setbackRep);
   g.C-=inc*(g.mods.setbackWorse?3:CFG.setbackCap);g.E=CFG.eReset;
   res.push(["bad","🔥 THE BURN. The injury the exhaustion was saving up for. A deep fryer, a hand, a week you don't remember. (Reputation and money take the hit; you're patched up at 40 energy.)"]);
  }
@@ -845,7 +901,7 @@ function passive(res){
 function hazards(res){
  const mqs=g.ventures.map(v=>v.mq), mqf=mqs.length?mqs.reduce((a,b)=>a+b,0)/(100*mqs.length):.5;
  if(Math.random()<sig(-3+2.5*g.R/100+2*(1-g.E/100)+.25*g.ventures.length)){
-  const dmg=20*(1-.6*(.5*g.N/100+.5*mqf));g.R=Math.max(0,g.R-dmg);
+  const dmg=20*(1-.6*(.5*g.N/100+.5*mqf));g.R=Math.max(rFloor(),g.R-dmg);
   res.push(["bad",`🗞️ The press smells blood — a needling piece runs. Reputation −${dmg.toFixed(0)}.`]);}
  if(Math.random()<sig(-3+2*(g._growth||0)+.8*g.ventures.length-2*(g.alloc.team/budget()))){
   const hit=income()*.8;g.C-=hit;res.push(["bad",`📦 Supplier credit crunch — cash up front this month. −${money(hit)}.`]);}
@@ -853,7 +909,7 @@ function hazards(res){
   g.C+=5;g.R=Math.min(100,g.R+6);res.push(["good","✨ A glowing mention, a full Saturday, a friend of a friend with a wine cellar. Small wins add up."]);}
  for(const v of [...g.ventures]){
   if(v.mq<CFG.mqScandal&&Math.random()<.35+(g.mods.scandalWorse?.1:0)){
-   g.R=Math.max(0,g.R-35);g.C-=income()*2;g.scandals++;
+   g.R=Math.max(rFloor(),g.R-35);g.C-=income()*2;g.scandals++;
    if(v.hit){g.ventures.splice(g.ventures.indexOf(v),1);
     g.maxExp=Math.max(g.maxExp||0,g.nextExp);
     g.nextExp=Math.max(g.ventures.length,g.nextExp-1);
@@ -931,7 +987,7 @@ function targetVenture(e){
 function applyFx(fx,e){
  if(!fx)return;
  if(fx.S)g.S=Math.max(0,Math.min(100,g.S+fx.S));
- if(fx.R)g.R=Math.max(0,Math.min(100,g.R+fx.R));
+ if(fx.R)g.R=Math.max(fx.R<0?rFloor():0,Math.min(100,g.R+fx.R));
  if(fx.N)g.N=Math.max(0,Math.min(100,g.N+fx.N));
  if(fx.E)g.E=Math.max(1,Math.min(100,g.E+fx.E));
  if(fx.Ci)g.C+=fx.Ci*Math.max(3,income());
@@ -959,6 +1015,7 @@ function oppoAvailable(){
  if(g.rung<8||g.betWait>0||g.nextExp>=CFG.exps.length||g.ended)return false;
  if(g.dismissedOppo===g.turn)return false;
  if(g.pendingBet&&g.pendingBet.readyTurn>g.turn)return false;
+ if(g.nextExp===4)return g.C+CFG.borrow>=worldInstallment();
  const ex=CFG.exps[g.nextExp];
  const reb=g.nextExp<(g.maxExp||0)?.6:1;
  return g.C+CFG.borrow>=ex.cost*reb*((g.pendingBet&&g.pendingBet.mods.costMult)||1);
@@ -978,10 +1035,38 @@ function attemptBet(mods,name){
   printTicket({kind:"OPENING",ti:ex.name.toUpperCase(),sc:xp.win,cls:"special"},[{t:"Service!",say:""}]);
   logline("gold",`🏆 ${p<.45?"Against the odds — ":""}${ex.name} is yours. (The bet: ${(100*p).toFixed(0)}% and it landed.)`);
  }else{
-  g.C+=cost*(1-CFG.failFrac);g.R=Math.max(0,g.R-CFG.failRep);
+  g.C+=cost*(1-CFG.failFrac);g.R=Math.max(rFloor(),g.R-CFG.failRep);
   printTicket({kind:"THE FALL",ti:ex.name.toUpperCase(),sc:xp.lose,cls:"special"},[{t:"Back to the pass.",say:""}]);
   logline("bad",`💸 The ${ex.name} bet fails. ${(100*(1-p)).toFixed(0)}% chance it would — the odds were readable, going in. −${money(cost*CFG.failFrac)} and a bruised name.`);
  }
+}
+
+
+/* ---- the World: three signatures, one year each minimum ---- */
+const WORLD_CITIES=[
+ {n:"Tokyo",sc:"A room above Ginza, a hanko stamp pressed into red paste, a bow held one beat longer than the contract required. Tokyo does not sign with you; it accepts you, provisionally, like weather."},
+ {n:"Dubai",sc:"The signing happens on the 61st floor at golden hour, with a pen heavier than a filleting knife. Below, a city built at the speed of appetite. Your name will glow here in two alphabets, one of which you can read."},
+ {n:"São Paulo",sc:"A rooftop, a thunderstorm arriving on schedule, a partner who signs laughing with rain on the paper. The ink runs a little. So does everything here — forward, loudly, alive. The third signature. The set is complete."}];
+function worldInstallment(){const lic=g.worldMods&&g.worldMods.license;return CFG.exps[4].cost*(lic?.75:1)/3;}
+function worldSign(mods){
+ if(g.worldStage===0)g.worldMods=mods||{};
+ const inst=worldInstallment();
+ g.C-=inst;g.betWait=1;
+ const city=WORLD_CITIES[g.worldStage];g.worldStage++;
+ printTicket({kind:"THE WORLD — SIGNATURE "+g.worldStage+"/3",ti:city.n.toUpperCase(),sc:city.sc,cls:"special"},[{t:"Next.",say:""}]);
+ logline("gold","🌍 "+city.n+" signed — "+g.worldStage+"/3, "+money(inst)+" committed.");
+ if(g.worldStage>=3){
+  const xp=XP[4];
+  printTicket({kind:"THE YEAR OF THREE OPENINGS",ti:xp.stage2.ti,sc:xp.stage2.sc,cls:"special"},
+   xp.stage2.opts.map(o=>({t:o.t,say:"The other two openings begin without you — in every sense.",fx:{}})),
+   ()=>{const ex=CFG.exps[4];
+    let mq=CFG.mqHireBase+CFG.mqHireNet*g.N+8-(g.mods.hireMinus?8:0);
+    g.ventures.push({name:"The World",mq:Math.max(15,Math.min(95,mq)),dist:ex.dist,market:ex.market,stars:0,hit:false,starMod:0,license:!!(g.worldMods&&g.worldMods.license),staffed:false});
+    g.nextExp=5;g.maxExp=Math.max(g.maxExp||0,5);g.rung=13;
+    printTicket({kind:"OPENING",ti:"THE WORLD",sc:xp.win,cls:"star"},[{t:"Service!",say:""}]);
+    save();render();});
+ }
+ save();render();
 }
 
 /* ============ UI ============ */
@@ -1037,6 +1122,20 @@ function renderOppo(){
  const box=$("oppobox");
  if(!oppoAvailable()){box.innerHTML="";return;}
  const i=g.nextExp,ex=CFG.exps[i],xp=XP[i],st=xp.stage1;
+ if(i===4){
+  const inst=worldInstallment();
+  if(g.worldStage===0){
+   box.innerHTML=`<div class="oppo"><h3>✦ ${st.ti}</h3><p>${st.sc} The World signs in three cities, one signature at a time — Tokyo, Dubai, São Paulo. Each signature: ~${money(CFG.exps[4].cost/3)} (less if licensed).</p>
+    ${st.opts.map((o,j)=>`<button data-x="w${j}">${o.t}</button>`).join("")}
+    <button data-x="skip" style="border-color:#cfc6ae;color:#8a8474">Not this season</button></div>`;
+  }else{
+   box.innerHTML=`<div class="oppo"><h3>✦ THE WORLD — ${g.worldStage}/3 signed</h3><p>${["","Tokyo holds. Dubai waits in a glass tower.","Tokyo and Dubai hold. São Paulo waits, with weather."][g.worldStage]}</p>
+    <div class="odds">next signature ~${money(inst)} · you have ${money(g.C)}</div>
+    <button data-x="wsign">Sign ${WORLD_CITIES[g.worldStage].n}</button>
+    <button data-x="skip" style="border-color:#cfc6ae;color:#8a8474">Not this season</button></div>`;
+  }
+  return;
+ }
  const rebuild=g.nextExp<(g.maxExp||0);
  const[b0,bS,bR,bN]=ex.bet;
  const p=sig(b0+(rebuild?.25:0)+(g.flags.OPERATOR?.15:0)+bS*g.S/100+bR*g.R/100+bN*g.N/100);
@@ -1173,6 +1272,8 @@ $("oppobox").addEventListener("click",ev=>{
  const b=ev.target.closest("button");if(!b)return;
  const x=b.dataset.x;
  if(x==="skip"){g.dismissedOppo=g.turn;renderOppo();return;}
+ if(x==="wsign"){worldSign();$("oppobox").innerHTML="";return;}
+ if(x&&x[0]==="w"&&x!=="wsign"){const o=XP[4].stage1.opts[+x.slice(1)];worldSign({...o.mods});$("oppobox").innerHTML="";return;}
  const i=g.nextExp,xp=XP[i],o=xp.stage1.opts[+x];
  const nameEl=$("vname"),name=nameEl?(nameEl.value.trim()||null):null;
  const go=(mods)=>{
